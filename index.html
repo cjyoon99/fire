@@ -159,7 +159,7 @@ const ALL={};
   for(const [nm,d] of Object.entries(FIRE_RAW)) ALL[nm]=R(d);
 })();
 
-let EXP=null,TAB={},YEAR={},FT='전체';
+let EXP=null,TAB={},RECNO={},FT='전체';
 const FAC_TREE=[
   {big:'소화설비',icon:'🧯',mids:[
     {mid:'소화기구 및 자동소화장치',items:['소화기구(소화기,자확,간이)','주거용주방자동소화장치','상업용주방자동소화장치','캐비닛형자동소화장치','가스·분말·고체자동소화장치']},
@@ -182,7 +182,7 @@ const FAC_TREE=[
   {big:'기타',icon:'🏗️',mids:[{mid:'',items:['방화문, 방화셔터','비상구,피난통로','방염']}]},
   {big:'다중이용업소',icon:'🏪',mids:[{mid:'',items:['소화기또는자동확산소화기','간이스프링클러설비','비상경보설비또는자동화재탐지설비','가스누설경보기','피난기구','피난유도선','유도등·유도표지또는비상조명등','휴대용비상조명','방화문','비상구(비상탈출구)','영업장내부피난통로','영상음향차단장치','누전차단기','창문','피난안내도·피난안내영상물','방염물품']}]},
 ];
-function getRec(nm){const b=ALL[nm],s=YEAR[nm];if(!s||s===b.year)return b;return b.history.find(h=>h.year===s)||b;}
+function getRec(nm){const b=ALL[nm],no=RECNO[nm];if(!no||no===b.no)return b;return b.history.find(h=>h.no===no)||b;}
 function setF(t){FT=t;document.querySelectorAll('.ft').forEach(b=>{const l=b.textContent.trim();b.classList.toggle('on',t==='전체'?l==='전체':l.startsWith(t));});render();}
 function getF(){const q=(document.getElementById('qi').value||'').trim().toLowerCase();return Object.entries(ALL).filter(([nm,d])=>{if(FT!=='전체'&&d.type!==FT)return false;if(!q)return true;return nm.toLowerCase().includes(q)||(d.usage||'').includes(q)||(d.address||'').includes(q);});}
 function render(){
@@ -202,13 +202,17 @@ function cHTML(nm,d){
   const hb=d.history&&d.history.length?`<span class="badge bhist">+${d.history.length}년도</span>`:'';
   return`<div class="card${isO?' open':''}" id="c${d.no}">
 <div class="card-head" onclick="tog('${esc(nm)}')">
-  <div class="head-top"><span class="cno">${d.no}</span><span class="cnm">${nm}</span><span class="badge by">${rec.year}</span><span class="badge bg">${rec.grade||''}</span><span class="badge ${tc}">${rec.type}</span>${db}${hb}<span class="chevron">▼</span></div>
+  <div class="head-top"><span class="cno">${d.no}</span><span class="cnm">${nm}</span><span class="badge by">${rec.year}${d.history&&d.history.some(h=>h.year===rec.year)?` #${rec.no}`:''}</span><span class="badge bg">${rec.grade||''}</span><span class="badge ${tc}">${rec.type}</span>${db}${hb}<span class="chevron">▼</span></div>
   <div class="head-sub">${[rec.usage,rec.floors,rec.address].filter(Boolean).join(' · ')}</div>
 </div>${isO?dHTML(nm,d):''}</div>`;
 }
 function dHTML(nm,d){
-  const rec=getRec(nm),sel=YEAR[nm]||d.year,all=[d,...(d.history||[])];
-  const ybar=all.length>1?`<div class="year-bar">${all.map((r,i)=>`<button class="ybtn${r.year===sel?' on':''}" onclick="setYear('${esc(nm)}','${r.year}');event.stopPropagation()">${r.year}${i===0?' ★':''}</button>`).join('')}</div>`:'';
+  const rec=getRec(nm),selNo=RECNO[nm]||d.no,all=[d,...(d.history||[])];
+  const ybar=all.length>1?`<div class="year-bar">${all.map((r,i)=>{
+    const isOn=r.no===selNo;
+    const lbl=r.year+(all.filter(x=>x.year===r.year).length>1?` #${r.no}`:'')+(i===0?' ★':'');
+    return`<button class="ybtn${isOn?' on':''}" onclick="setRec('${esc(nm)}',${r.no});event.stopPropagation()">${lbl}</button>`;
+  }).join('')}</div>`:'';
   const t=TAB[nm]||'기본';
   const tabs=[['기본','📋'],['소방시설','🧯'],['소화기구','🪣'],['기기사양','⚙️'],['불량사항','⚠️']];
   const th=tabs.map(([x,ic])=>`<button class="dtab${x===t?' on':''}" onclick="setTab('${esc(nm)}','${x}');event.stopPropagation()">${ic} ${x}</button>`).join('');
@@ -254,9 +258,9 @@ function tSpec(r){
   return html||'<p class="empty">기기사양 정보 없음</p>';
 }
 function tDef(r){if(!r.defects||!r.defects.length)return'<p class="empty">✅ 불량사항 없음</p>';return r.defects.map(df=>`<div class="di"><div class="di-top"><span class="dc2">${df.code}</span><span class="de2">${df.equip}</span><span class="ds s${df.status}">${df.status}</span></div><div class="dct">${df.content}</div></div>`).join('');}
-function tog(nm){EXP=(EXP===nm)?null:nm;if(!YEAR[nm])YEAR[nm]=ALL[nm].year;render();if(EXP){const el=document.getElementById('c'+ALL[nm].no);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),60);}}
+function tog(nm){EXP=(EXP===nm)?null:nm;if(!RECNO[nm])RECNO[nm]=ALL[nm].no;render();if(EXP){const el=document.getElementById('c'+ALL[nm].no);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),60);}}
 function setTab(nm,t){TAB[nm]=t;render();}
-function setYear(nm,y){YEAR[nm]=y;render();}
+function setRec(nm,no){RECNO[nm]=no;render();}
 function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
 render();
 </script>
