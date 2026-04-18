@@ -314,8 +314,12 @@ function secureInit(){
     render();
     return;
   }
-  // 잠금 확인
-  checkLock();
+  // 잠금 확인 후 버튼 상태 설정
+  const locked = checkLock();
+  if(!locked){
+    document.getElementById('lbtn').disabled = false;
+    document.getElementById('li').disabled = false;
+  }
   document.getElementById('li').focus();
 }
 
