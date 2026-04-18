@@ -106,9 +106,41 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Samsung One'
 .empty{font-size:14px;color:#bbb;padding:24px 0;text-align:center}
 .fab{position:fixed;bottom:calc(max(env(safe-area-inset-bottom),16px) + 12px);right:20px;width:50px;height:50px;border-radius:25px;background:#1c3d6e;color:#fff;font-size:22px;border:none;box-shadow:0 4px 14px rgba(28,61,110,0.4);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:100;-webkit-appearance:none}
 .fab:active{transform:scale(0.93)}
+
+/* 보안 잠금 화면 */
+#lock-screen{position:fixed;inset:0;background:#1c3d6e;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px}
+#lock-screen.hide{display:none}
+.lock-logo{font-size:48px;margin-bottom:8px}
+.lock-title{font-size:20px;font-weight:700;color:#fff;letter-spacing:-0.3px;margin-bottom:4px}
+.lock-sub{font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:32px}
+.lock-box{background:rgba(255,255,255,0.1);border-radius:16px;padding:24px;width:100%;max-width:320px}
+.lock-label{font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:8px;font-weight:500}
+.lock-input{width:100%;height:48px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.12);color:#fff;font-size:16px;padding:0 14px;font-family:inherit;outline:none;-webkit-appearance:none}
+.lock-input:focus{border-color:rgba(255,255,255,0.6)}
+.lock-input::placeholder{color:rgba(255,255,255,0.4)}
+.lock-btn{width:100%;height:48px;margin-top:16px;border-radius:10px;border:none;background:#fff;color:#1c3d6e;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;-webkit-appearance:none}
+.lock-btn:active{transform:scale(0.97)}
+.lock-err{font-size:13px;color:#ff6b6b;text-align:center;margin-top:12px;min-height:20px}
+.lock-attempts{font-size:11px;color:rgba(255,255,255,0.4);text-align:center;margin-top:8px}
 </style>
 </head>
 <body>
+
+<!-- 잠금 화면 -->
+<div id="lock-screen">
+  <div class="lock-logo">🔥</div>
+  <div class="lock-title">혁신소방 점검대장</div>
+  <div class="lock-sub">접근 권한이 필요합니다</div>
+  <div class="lock-box">
+    <div class="lock-label">비밀번호</div>
+    <input type="password" id="pw-input" class="lock-input" placeholder="비밀번호를 입력하세요"
+      onkeydown="if(event.key==='Enter')tryLogin()" autocomplete="off">
+    <button class="lock-btn" onclick="tryLogin()">확인</button>
+    <div class="lock-err" id="pw-err"></div>
+    <div class="lock-attempts" id="pw-attempts"></div>
+  </div>
+</div>
+
 <div id="app">
   <div class="top-bar">
     <div class="top-inner">
@@ -263,6 +295,74 @@ function setTab(nm,t){TAB[nm]=t;render();}
 function setRec(nm,no){RECNO[nm]=no;render();}
 function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
 render();
+</script>
+
+<script>
+
+/* ── 보안 잠금 ── */
+(function(){
+  const URL_KEY = 'fire2026';       // URL 키 (변경 가능)
+  const PASSWORD = 'hyukshin!';     // 비밀번호 (변경 가능)
+  const MAX_TRY = 5;                // 최대 시도 횟수
+  const LOCK_MIN = 10;              // 잠금 시간 (분)
+  const SESSION_KEY = 'hs_auth';
+
+  const params = new URLSearchParams(window.location.search);
+  const urlKey = params.get('key') || '';
+
+  // STEP 1: URL 키 확인
+  if(urlKey !== URL_KEY){
+    document.getElementById('lock-screen').innerHTML =
+      '<div style="color:rgba(255,255,255,0.5);font-size:14px;text-align:center">접근이 제한된 페이지입니다</div>';
+    return;
+  }
+
+  // STEP 2: 세션 확인 (이미 로그인된 경우)
+  if(sessionStorage.getItem(SESSION_KEY) === 'ok'){
+    document.getElementById('lock-screen').classList.add('hide');
+    return;
+  }
+
+  // STEP 3: 잠금 확인
+  const lockUntil = parseInt(localStorage.getItem('hs_lock_until')||'0');
+  if(Date.now() < lockUntil){
+    const remain = Math.ceil((lockUntil - Date.now()) / 60000);
+    document.getElementById('pw-err').textContent = `${remain}분 후 다시 시도해주세요`;
+    document.getElementById('pw-input').disabled = true;
+    document.querySelector('.lock-btn').disabled = true;
+    return;
+  }
+
+  window.tryLogin = function(){
+    const val = document.getElementById('pw-input').value;
+    const tries = parseInt(localStorage.getItem('hs_tries')||'0') + 1;
+
+    if(val === PASSWORD){
+      localStorage.removeItem('hs_tries');
+      localStorage.removeItem('hs_lock_until');
+      sessionStorage.setItem(SESSION_KEY, 'ok');
+      document.getElementById('lock-screen').classList.add('hide');
+    } else {
+      localStorage.setItem('hs_tries', tries);
+      const remain = MAX_TRY - tries;
+      if(remain <= 0){
+        const until = Date.now() + LOCK_MIN * 60000;
+        localStorage.setItem('hs_lock_until', until);
+        localStorage.setItem('hs_tries', '0');
+        document.getElementById('pw-err').textContent = `${LOCK_MIN}분간 잠금됩니다`;
+        document.getElementById('pw-input').disabled = true;
+        document.querySelector('.lock-btn').disabled = true;
+        document.getElementById('pw-attempts').textContent = '';
+      } else {
+        document.getElementById('pw-err').textContent = '비밀번호가 틀렸습니다';
+        document.getElementById('pw-attempts').textContent = `남은 시도: ${remain}회`;
+        document.getElementById('pw-input').value = '';
+        document.getElementById('pw-input').focus();
+      }
+    }
+  };
+})();
+
 </script>
 </body>
 </html>
