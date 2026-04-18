@@ -109,37 +109,35 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Samsung One'
 
 
 
-/* ── 보안 잠금 화면 ── */
-#ls{position:fixed;inset:0;background:#1c3d6e;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px}
-#ls.off{display:none}
-.ll{font-size:52px;margin-bottom:8px}
-.lt{font-size:20px;font-weight:700;color:#fff;letter-spacing:-0.3px;margin-bottom:4px}
-.ls2{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:36px}
-.lb{background:rgba(255,255,255,0.1);border-radius:16px;padding:24px 20px;width:100%;max-width:320px}
-.ll2{font-size:12px;color:rgba(255,255,255,0.65);margin-bottom:8px;font-weight:600}
-.li{width:100%;height:50px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;font-size:16px;padding:0 14px;font-family:inherit;outline:none;-webkit-appearance:none;letter-spacing:2px}
-.li:focus{border-color:rgba(255,255,255,0.5)}
-.li::placeholder{color:rgba(255,255,255,0.35);letter-spacing:0}
-.lbtn{width:100%;height:50px;margin-top:14px;border-radius:10px;border:none;background:#fff;color:#1c3d6e;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;-webkit-appearance:none;transition:opacity 0.15s}
-.lbtn:active{opacity:0.85}
-.lbtn:disabled{opacity:0.4;cursor:not-allowed}
-.lerr{font-size:13px;color:#ff8080;text-align:center;margin-top:12px;min-height:18px;font-weight:500}
-.ltry{font-size:11px;color:rgba(255,255,255,0.35);text-align:center;margin-top:6px;min-height:16px}
-.lblock{font-size:13px;color:#ffcc80;text-align:center;margin-top:8px}
+
+
+#lockWrap{position:fixed;inset:0;background:#1c3d6e;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+#lockWrap.hidden{display:none}
+.lkFire{font-size:56px;margin-bottom:12px}
+.lkTitle{font-size:21px;font-weight:700;color:#fff;margin-bottom:6px}
+.lkDesc{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:32px}
+.lkCard{background:rgba(255,255,255,0.1);border-radius:18px;padding:28px 24px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px}
+.lkLbl{font-size:12px;font-weight:600;color:rgba(255,255,255,0.7)}
+.lkPw{height:52px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#fff;font-size:17px;padding:0 16px;font-family:inherit;outline:none;-webkit-appearance:none;letter-spacing:2px}
+.lkPw::placeholder{letter-spacing:0;color:rgba(255,255,255,0.4)}
+.lkPw:focus{border-color:rgba(255,255,255,0.6)}
+.lkOk{height:52px;border-radius:12px;border:none;background:#fff;color:#1c3d6e;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer}
+.lkOk:active{opacity:0.85}
+.lkErr{font-size:13px;text-align:center;color:#ff8080;min-height:18px;font-weight:500}
+
 </style>
 </head>
 <body>
-<div id="ls">
-  <div class="ll">🔥</div>
-  <div class="lt">혁신소방 점검대장</div>
-  <div class="ls2">접근 권한이 필요합니다</div>
-  <div class="lb">
-    <div class="ll2">비밀번호</div>
-    <input type="password" id="li" class="li" placeholder="비밀번호 입력"
-      onkeydown="if(event.key==='Enter')doLogin()" autocomplete="new-password">
-    <button class="lbtn" id="lbtn" onclick="doLogin()">확인</button>
-    <div class="lerr" id="lerr"></div>
-    <div class="ltry" id="ltry"></div>
+<div id="lockWrap">
+  <div class="lkFire">🔥</div>
+  <div class="lkTitle">혁신소방 점검대장</div>
+  <div class="lkDesc">접근 권한이 필요합니다</div>
+  <div class="lkCard">
+    <div class="lkLbl">비밀번호</div>
+    <input class="lkPw" id="lkPw" type="password" placeholder="비밀번호를 입력하세요"
+      autocomplete="off" onkeydown="if(event.key==='Enter')lkOk()">
+    <button class="lkOk" onclick="lkOk()">확인</button>
+    <div class="lkErr" id="lkErr"></div>
   </div>
 </div>
 
@@ -296,84 +294,40 @@ function tog(nm){EXP=(EXP===nm)?null:nm;if(!RECNO[nm])RECNO[nm]=ALL[nm].no;rende
 function setTab(nm,t){TAB[nm]=t;render();}
 function setRec(nm,no){RECNO[nm]=no;render();}
 function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
-secureInit();
-
-/* ── 보안 ── */
-const _UK='fire2026', _PW='hyukshin!', _SK='hs_ok', _TK='hs_t', _LK='hs_l', _MAX=5, _LMIN=10;
-
-function secureInit(){
-  // URL 키 확인
-  const key=new URLSearchParams(location.search).get('key')||'';
-  if(key!==_UK){
-    document.getElementById('ls').innerHTML='<div style="color:rgba(255,255,255,0.4);font-size:14px;padding:32px;text-align:center">⛔ 접근이 제한된 페이지입니다</div>';
+render();
+</script>
+<script>
+var LK_KEY='fire2026',LK_PW='hyukshin!',LK_SS='hsFire';
+(function(){
+  var k=new URLSearchParams(location.search).get('key')||'';
+  if(k!==LK_KEY){
+    document.getElementById('lockWrap').innerHTML='<p style="color:rgba(255,255,255,0.4);font-size:14px;text-align:center;padding:40px">접근이 제한된 페이지입니다</p>';
     return;
   }
-  // 세션 확인
-  if(sessionStorage.getItem(_SK)==='1'){
-    document.getElementById('ls').classList.add('off');
+  if(sessionStorage.getItem(LK_SS)==='y'){
+    document.getElementById('lockWrap').classList.add('hidden');
     render();
     return;
   }
-  // 잠금 확인 후 버튼 상태 설정
-  const locked = checkLock();
-  if(!locked){
-    document.getElementById('lbtn').disabled = false;
-    document.getElementById('li').disabled = false;
-  }
-  document.getElementById('li').focus();
-}
-
-function checkLock(){
-  const until=parseInt(localStorage.getItem(_LK)||'0');
-  if(Date.now()<until){
-    const rem=Math.ceil((until-Date.now())/60000);
-    document.getElementById('lerr').textContent='';
-    document.getElementById('lbtn').disabled=true;
-    document.getElementById('li').disabled=true;
-    document.getElementById('ltry').textContent='';
-    const el=document.createElement('div');
-    el.className='lblock';
-    el.id='lblock';
-    el.textContent=`⏱ ${rem}분 후 다시 시도 가능합니다`;
-    const box=document.querySelector('.lb');
-    if(!document.getElementById('lblock')) box.appendChild(el);
-    setTimeout(checkLock,10000);
-    return true;
-  }
-  return false;
-}
-
-function doLogin(){
-  if(checkLock()) return;
-  const val=document.getElementById('li').value;
-  if(val===_PW){
-    localStorage.removeItem(_TK);
-    localStorage.removeItem(_LK);
-    sessionStorage.setItem(_SK,'1');
-    document.getElementById('ls').classList.add('off');
+  setTimeout(function(){
+    var el=document.getElementById('lkPw');
+    if(el) el.focus();
+  },150);
+})();
+function lkOk(){
+  var v=document.getElementById('lkPw').value;
+  if(v===LK_PW){
+    sessionStorage.setItem(LK_SS,'y');
+    document.getElementById('lockWrap').classList.add('hidden');
     render();
   } else {
-    const tries=(parseInt(localStorage.getItem(_TK)||'0'))+1;
-    localStorage.setItem(_TK,tries);
-    const rem=_MAX-tries;
-    if(rem<=0){
-      localStorage.setItem(_LK,Date.now()+_LMIN*60000);
-      localStorage.setItem(_TK,'0');
-      document.getElementById('li').value='';
-      document.getElementById('li').disabled=true;
-      document.getElementById('lbtn').disabled=true;
-      document.getElementById('lerr').textContent='';
-      document.getElementById('ltry').textContent='';
-      checkLock();
-    } else {
-      document.getElementById('lerr').textContent='비밀번호가 틀렸습니다';
-      document.getElementById('ltry').textContent=`남은 시도: ${rem}회`;
-      document.getElementById('li').value='';
-      document.getElementById('li').focus();
-    }
+    var err=document.getElementById('lkErr');
+    err.textContent='비밀번호가 틀렸습니다';
+    document.getElementById('lkPw').value='';
+    document.getElementById('lkPw').focus();
+    setTimeout(function(){err.textContent='';},2000);
   }
 }
-
 </script>
 
 
