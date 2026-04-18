@@ -147,7 +147,7 @@ const ALL={};
   function R(d){
     return{
       no:d.n,year:d.y,type:d.t,usage:d.u,address:d.a,period:d.pd,
-      grade:d.g,manager:d.mg,insurance:d.ins,floor_area:d.fa,build_area:d.ba,
+      grade:d.g,approval:d.ap,insurance:d.ins,floor_area:d.fa,build_area:d.ba,
       floors:d.fl,height:d.ht,buildings:d.bd,structure:d.st,staircase:d.sc,
       elevator:d.el,parking:d.pk,multi_use:d.mu,fire_plan:d.fp,
       facility:d.fac||{},extinguisher:d.ext||{},spec:d.sp||{},
@@ -220,7 +220,7 @@ function dHTML(nm,d){
   return`<div class="detail" onclick="event.stopPropagation()">${ybar}<div class="dtabs">${th}</div><div class="tab-body">${body}</div></div>`;
 }
 function tBasic(r){
-  const rows=[['점검연도',r.year,false],['점검종류',r.type,false],['안전관리등급',r.grade,false],['연면적',r.floor_area,false],['건축면적',r.build_area,false],['층수',r.floors,false],['높이',r.height,false],['건물동수',r.buildings,false],['건축구조',r.structure,true],['직통계단',r.staircase,false],['승강기',r.elevator,false],['주차장',r.parking,true],['화재보험',r.insurance,true],['소방안전관리자',r.manager,true],['점검기간',r.period,true],['소재지',r.address,true],['대상물용도',r.usage,true],['다중이용업소',r.multi_use,false],['소방계획서',r.fire_plan,false]];
+  const rows=[['점검연도',r.year,false],['점검종류',r.type,false],['안전관리등급',r.grade,false],['사용승인일',r.approval,true],['연면적',r.floor_area,false],['건축면적',r.build_area,false],['층수',r.floors,false],['높이',r.height,false],['건물동수',r.buildings,false],['건축구조',r.structure,true],['직통계단',r.staircase,false],['승강기',r.elevator,false],['주차장',r.parking,true],['화재보험',r.insurance,true],['점검기간',r.period,true],['소재지',r.address,true],['대상물용도',r.usage,true],['다중이용업소',r.multi_use,false],['소방계획서',r.fire_plan,false]];
   return`<div class="ig">${rows.filter(([,v])=>v).map(([l,v,w])=>`<div class="ir${w?' wide':''}"><div class="il">${l}</div><div class="iv">${v}</div></div>`).join('')}</div>`;
 }
 function tFac(r){
