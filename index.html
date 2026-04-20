@@ -113,7 +113,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Samsung One'
 
 #lockWrap{position:fixed;inset:0;background:#1c3d6e;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
 #lockWrap.hidden{display:none}
-.lkFire{font-size:56px;margin-bottom:12px}
+.lkFire{margin-bottom:12px;display:flex;align-items:center;justify-content:center}
 .lkTitle{font-size:21px;font-weight:700;color:#fff;margin-bottom:6px}
 .lkDesc{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:32px}
 .lkCard{background:rgba(255,255,255,0.1);border-radius:18px;padding:28px 24px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px}
@@ -129,7 +129,26 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Samsung One'
 </head>
 <body>
 <div id="lockWrap">
-  <div class="lkFire">🔥</div>
+  <div class="lkFire"><svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 소화전 몸체 -->
+  <rect x="22" y="28" width="28" height="32" rx="6" fill="#ffffff" opacity="0.95"/>
+  <!-- 소화전 상단 캡 -->
+  <rect x="18" y="22" width="36" height="10" rx="5" fill="#ffffff" opacity="0.95"/>
+  <!-- 소화전 상단 볼트 -->
+  <circle cx="36" cy="17" r="6" fill="#ffffff" opacity="0.95"/>
+  <circle cx="36" cy="17" r="3" fill="#1c3d6e" opacity="0.6"/>
+  <!-- 소화전 좌측 호스 연결구 -->
+  <rect x="10" y="34" width="12" height="8" rx="4" fill="#ffffff" opacity="0.9"/>
+  <!-- 소화전 우측 호스 연결구 -->
+  <rect x="50" y="34" width="12" height="8" rx="4" fill="#ffffff" opacity="0.9"/>
+  <!-- 소화전 하단 베이스 -->
+  <rect x="18" y="56" width="36" height="8" rx="4" fill="#ffffff" opacity="0.95"/>
+  <!-- 소화전 중앙 패널 -->
+  <rect x="28" y="34" width="16" height="16" rx="3" fill="#1c3d6e" opacity="0.25"/>
+  <!-- 소화전 볼트들 -->
+  <circle cx="26" cy="32" r="2" fill="#1c3d6e" opacity="0.3"/>
+  <circle cx="46" cy="32" r="2" fill="#1c3d6e" opacity="0.3"/>
+</svg></div>
   <div class="lkTitle">혁신소방 점검대장</div>
   <div class="lkDesc">접근 권한이 필요합니다</div>
   <div class="lkCard">
@@ -144,7 +163,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Samsung One'
 <div id="app">
   <div class="top-bar">
     <div class="top-inner">
-      <div class="top-title">🔥 혁신소방 점검대장</div>
+      <div class="top-title">🚒 혁신소방 점검대장</div>
       <div class="top-sub" id="top-sub">로딩 중...</div>
       <div class="top-date">데이터 기준일: 2026년 04월 09일</div>
     </div>
@@ -297,7 +316,7 @@ function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
 render();
 </script>
 <script>
-var LK_KEY='fire2026',LK_PW='hs12!',LK_SS='hsFire';
+var LK_KEY='fire2026',LK_PW='hyukshin!',LK_SS='hsFire';
 (function(){
   var k=new URLSearchParams(location.search).get('key')||'';
   if(k!==LK_KEY){
