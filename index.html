@@ -1,354 +1,1174 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="혁신소방 점검대장">
-<meta name="theme-color" content="#1c3d6e">
-<title>혁신소방 점검대장</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Samsung One','Noto Sans KR','Malgun Gothic',sans-serif;background:#f2f3f7;color:#111;font-size:15px}
-#app{display:flex;flex-direction:column;height:100%;max-width:600px;margin:0 auto}
-.top-bar{background:#1c3d6e;padding:env(safe-area-inset-top,0px) 0 0;color:#fff;flex-shrink:0}
-.top-inner{padding:12px 16px 12px}
-.top-title{font-size:17px;font-weight:700;letter-spacing:-0.3px}
-.top-sub{font-size:12px;opacity:0.7;margin-top:2px}
-.top-date{font-size:11px;opacity:0.5;margin-top:1px}
-.search-area{background:#1c3d6e;padding:0 12px 12px;flex-shrink:0}
-.search-box{display:flex;align-items:center;background:rgba(255,255,255,0.15);border-radius:12px;padding:0 12px;gap:8px;height:44px}
-.search-box input{flex:1;background:none;border:none;color:#fff;font-size:15px;outline:none;font-family:inherit;-webkit-appearance:none}
-.search-box input::placeholder{color:rgba(255,255,255,0.55)}
-.filter-bar{background:#fff;border-bottom:1px solid #e8e8ec;display:flex;flex-shrink:0}
-.ft{flex:1;height:44px;border:none;background:none;font-size:14px;color:#888;font-family:inherit;cursor:pointer;position:relative;-webkit-appearance:none}
-.ft.on{color:#1c3d6e;font-weight:700}
-.ft.on::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:2.5px;background:#1c3d6e;border-radius:2px}
-.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#e8e8ec;border-bottom:1px solid #e0e0e6;flex-shrink:0}
-.sc{background:#fff;padding:9px 4px;text-align:center}
-.sc-v{font-size:18px;font-weight:700;color:#1c3d6e}
-.sc-l{font-size:10px;color:#999;margin-top:1px}
-.list-wrap{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px}
-.rh{font-size:12px;color:#aaa;padding:4px 4px 8px;display:flex;justify-content:space-between;align-items:center}
-.rh-date{font-size:11px;color:#bbb;background:#f0f0f0;padding:2px 8px;border-radius:10px}
-.card{background:#fff;border-radius:14px;margin-bottom:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08)}
-.card.open{box-shadow:0 2px 12px rgba(28,61,110,0.15)}
-.card-head{padding:13px 16px;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-.head-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.cno{font-size:12px;color:#bbb;min-width:24px;flex-shrink:0}
-.cnm{font-size:16px;font-weight:700;color:#111;flex:1;letter-spacing:-0.3px;word-break:keep-all}
-.badge{font-size:11px;padding:3px 8px;border-radius:20px;font-weight:600;white-space:nowrap;flex-shrink:0}
-.bg{background:#e6f0fb;color:#1460a8}
-.by{background:#f3f0ff;color:#5b4acb}
-.bt-종합{background:#e6f5e6;color:#2e7d32}
-.bt-작동{background:#fff3e0;color:#e65100}
-.bd{background:#fde8e8;color:#c62828}
-.bok{background:#e6f5e6;color:#2e7d32}
-.bhist{background:#f5f5f5;color:#888;font-size:10px}
-.head-sub{font-size:12px;color:#999;margin-top:5px;line-height:1.6;word-break:keep-all}
-.chevron{font-size:12px;color:#ccc;margin-left:auto;transition:transform 0.2s;flex-shrink:0}
-.card.open .chevron{transform:rotate(180deg)}
-.detail{border-top:1px solid #f0f0f5;background:#fafafe}
-.year-bar{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;border-bottom:1px solid #e8ecf4;background:#fff;scrollbar-width:none}
-.year-bar::-webkit-scrollbar{display:none}
-.ybtn{flex-shrink:0;height:38px;padding:0 18px;border:none;background:none;font-size:13px;color:#999;font-family:inherit;cursor:pointer;position:relative;font-weight:500;-webkit-appearance:none}
-.ybtn.on{color:#1c3d6e;font-weight:700}
-.ybtn.on::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:2.5px;background:#1c3d6e;border-radius:2px}
-.dtabs{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:10px 12px 0;gap:6px;scrollbar-width:none;background:#fafafe}
-.dtabs::-webkit-scrollbar{display:none}
-.dtab{flex-shrink:0;height:32px;padding:0 14px;border-radius:16px;border:1.5px solid #e0e4ea;background:#f5f5f9;color:#888;font-size:13px;cursor:pointer;font-family:inherit;font-weight:500;-webkit-appearance:none}
-.dtab.on{background:#1c3d6e;border-color:#1c3d6e;color:#fff;font-weight:700}
-.tab-body{padding:12px 14px 20px;background:#fafafe}
-.ig{display:grid;grid-template-columns:1fr 1fr}
-.ir{padding:8px 6px;border-bottom:1px solid #f0f0f5}
-.ir:nth-child(odd):not(.wide){border-right:1px solid #f0f0f5}
-.ir.wide{grid-column:1/-1}
-.il{font-size:11px;color:#aaa;margin-bottom:3px}
-.iv{font-size:13px;color:#111;line-height:1.5;word-break:break-all}
-.fac-big{margin-bottom:14px}
-.fac-big-hd{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:10px 10px 0 0;background:#1c3d6e;color:#fff}
-.fac-big-icon{font-size:16px;flex-shrink:0}
-.fac-big-name{font-size:14px;font-weight:700}
-.fac-big-body{border:1px solid #dde4f0;border-top:none;border-radius:0 0 10px 10px;overflow:hidden}
-.fac-mid{border-bottom:1px solid #eef1f8}
-.fac-mid:last-child{border-bottom:none}
-.fac-mid-hd{font-size:12px;font-weight:700;color:#1c3d6e;background:#eef2fa;padding:6px 12px;border-bottom:1px solid #dde4f0}
-.fac-items{display:flex;flex-direction:column}
-.fi{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;background:#fff;border-bottom:1px solid #f4f5f9}
-.fi:last-child{border-bottom:none}
-.fn{font-size:13px;color:#333;flex:1;line-height:1.4;word-break:keep-all;margin-right:8px}
-.fok{font-size:18px;font-weight:700;color:#2e7d32;flex-shrink:0}
-.eg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.ei{background:#f5f6fa;border-radius:10px;padding:14px 12px;text-align:center}
-.en{font-size:30px;font-weight:700;color:#1c3d6e}
-.el{font-size:11px;color:#888;margin-top:4px;line-height:1.4}
-.spec-big{margin-bottom:14px}
-.spec-big-hd{background:#1c3d6e;color:#fff;padding:9px 12px;border-radius:10px 10px 0 0;font-size:14px;font-weight:700}
-.spec-big-body{border:1px solid #dde4f0;border-top:none;border-radius:0 0 10px 10px;overflow:hidden}
-.spec-mid-block{border-bottom:1px solid #eef1f8}
-.spec-mid-block:last-child{border-bottom:none}
-.spec-mid-hd{font-size:12px;font-weight:700;color:#1c3d6e;background:#eef2fa;padding:6px 12px;border-bottom:1px solid #dde4f0}
-.spec-items{display:grid;grid-template-columns:1fr 1fr;background:#fff}
-.si{padding:8px 12px;border-bottom:1px solid #f4f5f9}
-.si:nth-child(odd):not(.wide){border-right:1px solid #f4f5f9}
-.si.wide{grid-column:1/-1}
-.si-l{font-size:11px;color:#aaa;margin-bottom:2px}
-.si-v{font-size:13px;color:#111;line-height:1.5;word-break:break-all}
-.di{background:#fff;border:1px solid #eee;border-radius:10px;padding:12px;margin-bottom:8px}
-.di-top{display:flex;align-items:center;gap:7px;margin-bottom:6px;flex-wrap:wrap}
-.dc2{font-size:11px;color:#bbb;background:#f5f5f5;padding:2px 7px;border-radius:10px}
-.de2{font-size:13px;font-weight:700;color:#555}
-.ds{font-size:11px;padding:3px 9px;border-radius:10px;margin-left:auto;white-space:nowrap;font-weight:600;flex-shrink:0}
-.s조치완료{background:#e6f5e6;color:#2e7d32}
-.s조치요함{background:#fde8e8;color:#c62828}
-.dct{font-size:14px;color:#222;line-height:1.6;word-break:keep-all}
-.empty{font-size:14px;color:#bbb;padding:24px 0;text-align:center}
-.fab{position:fixed;bottom:calc(max(env(safe-area-inset-bottom),16px) + 12px);right:20px;width:50px;height:50px;border-radius:25px;background:#1c3d6e;color:#fff;font-size:22px;border:none;box-shadow:0 4px 14px rgba(28,61,110,0.4);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:100;-webkit-appearance:none}
-.fab:active{transform:scale(0.93)}
-
-
-
-
-
-#lockWrap{position:fixed;inset:0;background:#1c3d6e;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
-#lockWrap.hidden{display:none}
-.lkFire{margin-bottom:12px;display:flex;align-items:center;justify-content:center}
-.lkTitle{font-size:21px;font-weight:700;color:#fff;margin-bottom:6px}
-.lkDesc{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:32px}
-.lkCard{background:rgba(255,255,255,0.1);border-radius:18px;padding:28px 24px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px}
-.lkLbl{font-size:12px;font-weight:600;color:rgba(255,255,255,0.7)}
-.lkPw{height:52px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#fff;font-size:17px;padding:0 16px;font-family:inherit;outline:none;-webkit-appearance:none;letter-spacing:2px}
-.lkPw::placeholder{letter-spacing:0;color:rgba(255,255,255,0.4)}
-.lkPw:focus{border-color:rgba(255,255,255,0.6)}
-.lkOk{height:52px;border-radius:12px;border:none;background:#fff;color:#1c3d6e;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer}
-.lkOk:active{opacity:0.85}
-.lkErr{font-size:13px;text-align:center;color:#ff8080;min-height:18px;font-weight:500}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#1c3d6e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="혁신소방 점검대장">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>🔥</text></svg>">
+    <title>혁신소방 점검대장</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Samsung One', 'Noto Sans KR', sans-serif;
+            background: #f5f5f5;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            word-break: keep-all;
+        }
+        
+        /* 헤더 */
+        .header {
+            background: #1c3d6e;
+            color: white;
+            padding: max(env(safe-area-inset-top), 12px) 16px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .header-date {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 12px;
+        }
+        
+        /* 검색 */
+        .search-box {
+            margin-bottom: 12px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            background: white;
+            outline: none;
+        }
+        
+        /* 필터 탭 */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .filter-tab {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-tab.active {
+            background: white;
+            color: #1c3d6e;
+            font-weight: 600;
+        }
+        
+        /* 통계 */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1c3d6e;
+        }
+        
+        /* 컨텐츠 */
+        .content {
+            padding: 16px;
+        }
+        
+        /* 카드 */
+        .card {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            padding: 14px 16px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .card-top {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .card-no {
+            font-size: 13px;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .card-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1c3d6e;
+            flex: 1;
+        }
+        
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-year {
+            background: #f3f0ff;
+            color: #5b4acb;
+        }
+        
+        .badge-grade {
+            background: #e6f0fb;
+            color: #1460a8;
+        }
+        
+        .badge-comprehensive {
+            background: #e6f5e6;
+            color: #2e7d32;
+        }
+        
+        .badge-operation {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        
+        .badge-defect {
+            background: #fde8e8;
+            color: #c62828;
+        }
+        
+        .badge-ok {
+            background: #e6f5e6;
+            color: #2e7d32;
+        }
+        
+        .badge-history {
+            background: #f5f5f5;
+            color: #888;
+        }
+        
+        .badge-category {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        /* 카드 상세 */
+        .card-detail {
+            display: none;
+            border-top: 1px solid #eee;
+        }
+        
+        .card-detail.show {
+            display: block;
+        }
+        
+        /* 연도 선택 바 */
+        .year-selector {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .year-btn {
+            padding: 6px 14px;
+            border: 1px solid #ddd;
+            border-radius: 16px;
+            background: white;
+            font-size: 13px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .year-btn.active {
+            background: #1c3d6e;
+            color: white;
+            border-color: #1c3d6e;
+        }
+        
+        /* 탭 */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .tab {
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        
+        .tab.active {
+            color: #1c3d6e;
+            font-weight: 600;
+            border-bottom-color: #1c3d6e;
+        }
+        
+        /* 탭 컨텐츠 */
+        .tab-content {
+            display: none;
+            padding: 16px;
+        }
+        
+        .tab-content.show {
+            display: block;
+        }
+        
+        /* 기본 정보 그리드 */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .info-item.full {
+            grid-column: 1 / -1;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            font-size: 14px;
+            color: #222;
+            line-height: 1.4;
+        }
+        
+        /* 소방시설 계층 */
+        .facility-section {
+            margin-bottom: 20px;
+        }
+        
+        .facility-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1c3d6e;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .facility-group {
+            margin-bottom: 16px;
+        }
+        
+        .facility-subtitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 8px;
+            padding-left: 12px;
+        }
+        
+        .facility-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding-left: 12px;
+        }
+        
+        .facility-item {
+            padding: 6px 12px;
+            background: #f0f7ff;
+            color: #1460a8;
+            border-radius: 16px;
+            font-size: 13px;
+        }
+        
+        /* 소화기구 카드 */
+        .ext-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .ext-card {
+            background: #f8f9fa;
+            padding: 14px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .ext-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+        
+        .ext-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1c3d6e;
+        }
+        
+        /* 기기사양 */
+        .spec-section {
+            margin-bottom: 20px;
+        }
+        
+        .spec-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1c3d6e;
+            margin-bottom: 12px;
+        }
+        
+        .spec-group {
+            margin-bottom: 16px;
+        }
+        
+        .spec-subtitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 8px;
+            padding-left: 8px;
+        }
+        
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            padding-left: 8px;
+        }
+        
+        .spec-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .spec-item.full {
+            grid-column: 1 / -1;
+        }
+        
+        .spec-label {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .spec-value {
+            font-size: 13px;
+            color: #222;
+            font-weight: 500;
+        }
+        
+        /* 불량사항 */
+        .defect-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .defect-card {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid #c62828;
+        }
+        
+        .defect-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .defect-code {
+            font-size: 13px;
+            font-weight: 600;
+            color: #c62828;
+        }
+        
+        .defect-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            background: white;
+            border-radius: 10px;
+            color: #666;
+        }
+        
+        .defect-equip {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+        
+        .defect-content {
+            font-size: 14px;
+            color: #222;
+            line-height: 1.4;
+        }
+        
+        .no-defect {
+            text-align: center;
+            padding: 24px;
+            color: #2e7d32;
+            font-size: 15px;
+        }
+        
+        /* 빈 상태 */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        
+        .empty-text {
+            font-size: 15px;
+        }
+        
+        /* 로딩 */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        /* 비밀번호 입력 */
+        .password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #1c3d6e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+        
+        .password-box {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 360px;
+        }
+        
+        .password-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1c3d6e;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        .password-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 16px;
+            outline: none;
+        }
+        
+        .password-input:focus {
+            border-color: #1c3d6e;
+        }
+        
+        .password-btn {
+            width: 100%;
+            padding: 12px;
+            background: #1c3d6e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .password-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .password-error {
+            color: #c62828;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 12px;
+        }
+        
+        .access-denied {
+            text-align: center;
+            padding: 40px 20px;
+            color: #c62828;
+        }
+        
+        .access-denied-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+        
+        .access-denied-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .access-denied-desc {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-<div id="lockWrap">
-  <div class="lkFire"><svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- 소화전 몸체 -->
-  <rect x="22" y="28" width="28" height="32" rx="6" fill="#ffffff" opacity="0.95"/>
-  <!-- 소화전 상단 캡 -->
-  <rect x="18" y="22" width="36" height="10" rx="5" fill="#ffffff" opacity="0.95"/>
-  <!-- 소화전 상단 볼트 -->
-  <circle cx="36" cy="17" r="6" fill="#ffffff" opacity="0.95"/>
-  <circle cx="36" cy="17" r="3" fill="#1c3d6e" opacity="0.6"/>
-  <!-- 소화전 좌측 호스 연결구 -->
-  <rect x="10" y="34" width="12" height="8" rx="4" fill="#ffffff" opacity="0.9"/>
-  <!-- 소화전 우측 호스 연결구 -->
-  <rect x="50" y="34" width="12" height="8" rx="4" fill="#ffffff" opacity="0.9"/>
-  <!-- 소화전 하단 베이스 -->
-  <rect x="18" y="56" width="36" height="8" rx="4" fill="#ffffff" opacity="0.95"/>
-  <!-- 소화전 중앙 패널 -->
-  <rect x="28" y="34" width="16" height="16" rx="3" fill="#1c3d6e" opacity="0.25"/>
-  <!-- 소화전 볼트들 -->
-  <circle cx="26" cy="32" r="2" fill="#1c3d6e" opacity="0.3"/>
-  <circle cx="46" cy="32" r="2" fill="#1c3d6e" opacity="0.3"/>
-</svg></div>
-  <div class="lkTitle">혁신소방 점검대장</div>
-  <div class="lkDesc">접근 권한이 필요합니다</div>
-  <div class="lkCard">
-    <div class="lkLbl">비밀번호</div>
-    <input class="lkPw" id="lkPw" type="password" placeholder="비밀번호를 입력하세요"
-      autocomplete="off" onkeydown="if(event.key==='Enter')lkOk()">
-    <button class="lkOk" onclick="lkOk()">확인</button>
-    <div class="lkErr" id="lkErr"></div>
-  </div>
-</div>
-
-<div id="app">
-  <div class="top-bar">
-    <div class="top-inner">
-      <div class="top-title">🚒 혁신소방 점검대장</div>
-      <div class="top-sub" id="top-sub">로딩 중...</div>
-      <div class="top-date">데이터 기준일: 2026년 04월 09일</div>
+    <!-- 비밀번호 입력 화면 -->
+    <div id="passwordOverlay" class="password-overlay" style="display: none;">
+        <div class="password-box">
+            <div class="password-title">🔥 혁신소방 점검대장</div>
+            <div class="password-subtitle">비밀번호를 입력하세요</div>
+            <input type="password" id="passwordInput" class="password-input" placeholder="비밀번호" autocomplete="off">
+            <button onclick="checkPassword()" class="password-btn">확인</button>
+            <div id="passwordError" class="password-error"></div>
+        </div>
     </div>
-  </div>
-  <div class="search-area">
-    <div class="search-box">
-      <span style="font-size:16px;opacity:0.7">🔍</span>
-      <input type="search" id="qi" placeholder="대상물명, 용도, 주소 검색..." oninput="render()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+
+    <!-- 접근 거부 화면 -->
+    <div id="accessDenied" style="display: none;">
+        <div class="access-denied">
+            <div class="access-denied-icon">🚫</div>
+            <div class="access-denied-text">접근이 제한된 페이지입니다</div>
+            <div class="access-denied-desc">올바른 URL로 접속해주세요</div>
+        </div>
     </div>
-  </div>
-  <div class="filter-bar">
-    <button class="ft on" onclick="setF('전체')">전체</button>
-    <button class="ft" onclick="setF('작동')">작동점검</button>
-    <button class="ft" onclick="setF('종합')">종합점검</button>
-  </div>
-  <div class="stat-row">
-    <div class="sc"><div class="sc-v" id="s1">0</div><div class="sc-l">전체</div></div>
-    <div class="sc"><div class="sc-v" id="s2">0</div><div class="sc-l">검색결과</div></div>
-    <div class="sc"><div class="sc-v" id="s3">0</div><div class="sc-l">불량있음</div></div>
-    <div class="sc"><div class="sc-v" id="s4">0</div><div class="sc-l">종합점검</div></div>
-  </div>
-  <div class="list-wrap">
-    <div class="rh"><span id="rh"></span><span class="rh-date">기준: 2026년 04월 09일</span></div>
-    <div id="list"></div>
-  </div>
-</div>
-<button class="fab" onclick="document.querySelector('.list-wrap').scrollTo({top:0,behavior:'smooth'})">↑</button>
-<script src="data.js"></script>
-<script>
-const ALL={};
-(function(){
-  function R(d){
-    return{
-      no:d.n,year:d.y,type:d.t,usage:d.u,address:d.a,period:d.pd,
-      grade:d.g,approval:d.ap,insurance:d.ins,floor_area:d.fa,build_area:d.ba,
-      floors:d.fl,height:d.ht,buildings:d.bd,structure:d.st,staircase:d.sc,
-      elevator:d.el,parking:d.pk,multi_use:d.mu,fire_plan:d.fp,
-      facility:d.fac||{},extinguisher:d.ext||{},spec:d.sp||{},
-      defects:(d.def||[]).map(x=>({equip:x.eq,code:x.cd,content:x.ct,status:x.ss})),
-      defect_count:d.dc,
-      history:(d.hi||[]).map(R)
-    };
-  }
-  for(const [nm,d] of Object.entries(FIRE_RAW)) ALL[nm]=R(d);
-})();
 
-let EXP=null,TAB={},RECNO={},FT='전체';
-const FAC_TREE=[
-  {big:'소화설비',icon:'🧯',mids:[
-    {mid:'소화기구 및 자동소화장치',items:['소화기구(소화기,자확,간이)','주거용주방자동소화장치','상업용주방자동소화장치','캐비닛형자동소화장치','가스·분말·고체자동소화장치']},
-    {mid:'수계소화설비',items:['옥내소화전설비','스프링클러설비','간이스프링클러설비','화재조기진압용스프링클러설비','물분무소화설비','미분무소화설비','포소화설비']},
-    {mid:'가스계·분말 소화설비',items:['이산화탄소소화설비','할론소화설비','할로겐화합물 및 불활성기체 소화설비','분말소화설비','강화액소화설비','고체에어로졸소화설비']},
-    {mid:'옥외소화전',items:['옥외소화전설비']},
-  ]},
-  {big:'경보설비',icon:'🔔',mids:[{mid:'',items:['단독경보형감지기','비상경보설비','자동화재탐지설비 및 시각경보기','비상방송설비','통합감시시설','자동화재속보설비','누전경보기','가스누설경보기']}]},
-  {big:'피난구조설비',icon:'🚪',mids:[
-    {mid:'피난기구',items:['공기안전매트·피난사다리,(간이)완강기·미끄럼대·구조대','다수인피난장비','승강식피난기,하향식피난구용내림식사다리','인명구조기구']},
-    {mid:'유도등 및 유도표지',items:['유도등','유도표지','피난유도선']},
-    {mid:'비상조명',items:['비상조명등','휴대용비상조명등']},
-  ]},
-  {big:'소화용수설비',icon:'💧',mids:[{mid:'',items:['상수도소화용수설비','소화수조 및 저수조']}]},
-  {big:'소화활동설비',icon:'🚒',mids:[
-    {mid:'제연설비',items:['거실제연설비','부속실 등 제연설비']},
-    {mid:'연결설비',items:['연결송수관설비','연결살수설비']},
-    {mid:'기타 활동설비',items:['비상콘센트설비','무선통신보조설비','연소방지설비']},
-  ]},
-  {big:'기타',icon:'🏗️',mids:[{mid:'',items:['방화문, 방화셔터','비상구,피난통로','방염']}]},
-  {big:'다중이용업소',icon:'🏪',mids:[{mid:'',items:['소화기또는자동확산소화기','간이스프링클러설비','비상경보설비또는자동화재탐지설비','가스누설경보기','피난기구','피난유도선','유도등·유도표지또는비상조명등','휴대용비상조명','방화문','비상구(비상탈출구)','영업장내부피난통로','영상음향차단장치','누전차단기','창문','피난안내도·피난안내영상물','방염물품']}]},
-];
-function getRec(nm){const b=ALL[nm],no=RECNO[nm];if(!no||no===b.no)return b;return b.history.find(h=>h.no===no)||b;}
-function setF(t){FT=t;document.querySelectorAll('.ft').forEach(b=>{const l=b.textContent.trim();b.classList.toggle('on',t==='전체'?l==='전체':l.startsWith(t));});render();}
-function getF(){const q=(document.getElementById('qi').value||'').trim().toLowerCase();return Object.entries(ALL).filter(([nm,d])=>{if(FT!=='전체'&&d.type!==FT)return false;if(!q)return true;return nm.toLowerCase().includes(q)||(d.usage||'').includes(q)||(d.address||'').includes(q);});}
-function render(){
-  const f=getF();
-  document.getElementById('s1').textContent=Object.keys(ALL).length;
-  document.getElementById('s2').textContent=f.length;
-  document.getElementById('s3').textContent=f.filter(([,d])=>d.defect_count>0).length;
-  document.getElementById('s4').textContent=f.filter(([,d])=>d.type==='종합').length;
-  document.getElementById('rh').textContent=f.length+'개 대상물';
-  document.getElementById('top-sub').textContent=Object.keys(ALL).length+'개 대상물';
-  document.getElementById('list').innerHTML=f.map(([nm,d])=>cHTML(nm,d)).join('');
-}
-function cHTML(nm,d){
-  const isO=EXP===nm,rec=getRec(nm);
-  const tc=rec.type==='종합'?'bt-종합':'bt-작동';
-  const db=rec.defect_count>0?`<span class="badge bd">불량 ${rec.defect_count}건</span>`:`<span class="badge bok">이상없음</span>`;
-  const hb=d.history&&d.history.length?`<span class="badge bhist">+${d.history.length}년도</span>`:'';
-  return`<div class="card${isO?' open':''}" id="c${d.no}">
-<div class="card-head" onclick="tog('${esc(nm)}')">
-  <div class="head-top"><span class="cno">${d.no}</span><span class="cnm">${nm}</span><span class="badge by">${rec.year}${d.history&&d.history.some(h=>h.year===rec.year)?` #${rec.no}`:''}</span><span class="badge bg">${rec.grade||''}</span><span class="badge ${tc}">${rec.type}</span>${db}${hb}<span class="chevron">▼</span></div>
-  <div class="head-sub">${[rec.usage,rec.floors,rec.address].filter(Boolean).join(' · ')}</div>
-</div>${isO?dHTML(nm,d):''}</div>`;
-}
-function dHTML(nm,d){
-  const rec=getRec(nm),selNo=RECNO[nm]||d.no,all=[d,...(d.history||[])];
-  const ybar=all.length>1?`<div class="year-bar">${all.map((r,i)=>{
-    const isOn=r.no===selNo;
-    const lbl=r.year+(all.filter(x=>x.year===r.year).length>1?` #${r.no}`:'')+(i===0?' ★':'');
-    return`<button class="ybtn${isOn?' on':''}" onclick="setRec('${esc(nm)}',${r.no});event.stopPropagation()">${lbl}</button>`;
-  }).join('')}</div>`:'';
-  const t=TAB[nm]||'기본';
-  const tabs=[['기본','📋'],['소방시설','🧯'],['소화기구','🪣'],['기기사양','⚙️'],['불량사항','⚠️']];
-  const th=tabs.map(([x,ic])=>`<button class="dtab${x===t?' on':''}" onclick="setTab('${esc(nm)}','${x}');event.stopPropagation()">${ic} ${x}</button>`).join('');
-  const body=t==='기본'?tBasic(rec):t==='소방시설'?tFac(rec):t==='소화기구'?tExt(rec):t==='기기사양'?tSpec(rec):tDef(rec);
-  return`<div class="detail" onclick="event.stopPropagation()">${ybar}<div class="dtabs">${th}</div><div class="tab-body">${body}</div></div>`;
-}
-function tBasic(r){
-  const rows=[['점검연도',r.year,false],['점검종류',r.type,false],['안전관리등급',r.grade,false],['사용승인일',r.approval,true],['연면적',r.floor_area,false],['건축면적',r.build_area,false],['층수',r.floors,false],['높이',r.height,false],['건물동수',r.buildings,false],['건축구조',r.structure,true],['직통계단',r.staircase,false],['승강기',r.elevator,false],['주차장',r.parking,true],['화재보험',r.insurance,true],['점검기간',r.period,true],['소재지',r.address,true],['대상물용도',r.usage,true],['다중이용업소',r.multi_use,false],['소방계획서',r.fire_plan,false]];
-  return`<div class="ig">${rows.filter(([,v])=>v).map(([l,v,w])=>`<div class="ir${w?' wide':''}"><div class="il">${l}</div><div class="iv">${v}</div></div>`).join('')}</div>`;
-}
-function tFac(r){
-  const fac=r.facility||{};
-  if(!Object.keys(fac).length)return'<p class="empty">소방시설 정보 없음</p>';
-  let html='';
-  for(const {big,icon,mids} of FAC_TREE){
-    if(!mids.some(({items})=>items.some(k=>fac[k])))continue;
-    html+=`<div class="fac-big"><div class="fac-big-hd"><span class="fac-big-icon">${icon}</span><span class="fac-big-name">${big}</span></div><div class="fac-big-body">`;
-    for(const {mid,items} of mids){
-      const vis=items.filter(k=>fac[k]);if(!vis.length)continue;
-      html+=`<div class="fac-mid">${mid?`<div class="fac-mid-hd">${mid}</div>`:''}<div class="fac-items">`;
-      vis.forEach(k=>{html+=`<div class="fi"><span class="fn">${k}</span><span class="fok">○</span></div>`;});
-      html+=`</div></div>`;
-    }
-    html+=`</div></div>`;
-  }
-  return html||'<p class="empty">소방시설 정보 없음</p>';
-}
-function tExt(r){const e=r.extinguisher||{},ks=Object.keys(e);if(!ks.length)return'<p class="empty">소화기구 정보 없음</p>';return`<div class="eg">${ks.map(k=>`<div class="ei"><div class="en">${e[k]}</div><div class="el">${k}</div></div>`).join('')}</div>`;}
-function tSpec(r){
-  const spec=r.spec;if(!spec||!Object.keys(spec).length)return'<p class="empty">기기사양 정보 없음</p>';
-  let html='';
-  for(const [big,mids] of Object.entries(spec)){
-    const entries=Object.entries(mids);if(!entries.length)continue;
-    html+=`<div class="spec-big"><div class="spec-big-hd">⚙️ ${big}</div><div class="spec-big-body">`;
-    for(const [mid,items] of entries){
-      if(!items||!items.length)continue;
-      html+=`<div class="spec-mid-block">`;
-      if(mid&&mid!=='_')html+=`<div class="spec-mid-hd">${mid}</div>`;
-      html+=`<div class="spec-items">${items.map(it=>`<div class="si${it.vl.length>14?' wide':''}"><div class="si-l">${it.lb}</div><div class="si-v">${it.vl}</div></div>`).join('')}</div></div>`;
-    }
-    html+=`</div></div>`;
-  }
-  return html||'<p class="empty">기기사양 정보 없음</p>';
-}
-function tDef(r){if(!r.defects||!r.defects.length)return'<p class="empty">✅ 불량사항 없음</p>';return r.defects.map(df=>`<div class="di"><div class="di-top"><span class="dc2">${df.code}</span><span class="de2">${df.equip}</span><span class="ds s${df.status}">${df.status}</span></div><div class="dct">${df.content}</div></div>`).join('');}
-function tog(nm){EXP=(EXP===nm)?null:nm;if(!RECNO[nm])RECNO[nm]=ALL[nm].no;render();if(EXP){const el=document.getElementById('c'+ALL[nm].no);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),60);}}
-function setTab(nm,t){TAB[nm]=t;render();}
-function setRec(nm,no){RECNO[nm]=no;render();}
-function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
-render();
-</script>
-<script>
-var LK_KEY='fire2026',LK_PW='hs12!',LK_SS='hsFire';
-(function(){
-  var k=new URLSearchParams(location.search).get('key')||'';
-  if(k!==LK_KEY){
-    document.getElementById('lockWrap').innerHTML='<p style="color:rgba(255,255,255,0.4);font-size:14px;text-align:center;padding:40px">접근이 제한된 페이지입니다</p>';
-    return;
-  }
-  if(sessionStorage.getItem(LK_SS)==='y'){
-    document.getElementById('lockWrap').classList.add('hidden');
-    render();
-    return;
-  }
-  setTimeout(function(){
-    var el=document.getElementById('lkPw');
-    if(el) el.focus();
-  },150);
-})();
-function lkOk(){
-  var v=document.getElementById('lkPw').value;
-  if(v===LK_PW){
-    sessionStorage.setItem(LK_SS,'y');
-    document.getElementById('lockWrap').classList.add('hidden');
-    render();
-  } else {
-    var err=document.getElementById('lkErr');
-    err.textContent='비밀번호가 틀렸습니다';
-    document.getElementById('lkPw').value='';
-    document.getElementById('lkPw').focus();
-    setTimeout(function(){err.textContent='';},2000);
-  }
-}
-</script>
+    <!-- 메인 앱 -->
+    <div id="app" style="display: none;">
+        <div class="header">
+            <div class="header-title">🔥 혁신소방 점검대장</div>
+            <div class="header-date" id="dataDate">데이터 기준: -</div>
+            
+            <div class="search-box">
+                <input type="search" class="search-input" id="searchInput" 
+                       placeholder="대상물명, 용도, 주소 검색" 
+                       autocapitalize="off">
+            </div>
+            
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all">전체</button>
+                <button class="filter-tab" data-filter="작동">작동점검</button>
+                <button class="filter-tab" data-filter="종합">종합점검</button>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">전체</div>
+                    <div class="stat-value" id="statTotal">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">검색결과</div>
+                    <div class="stat-value" id="statFiltered">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">불량있음</div>
+                    <div class="stat-value" id="statDefect">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">종합점검</div>
+                    <div class="stat-value" id="statComprehensive">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div id="cardList"></div>
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-icon">🔍</div>
+                <div class="empty-text">검색 결과가 없습니다</div>
+            </div>
+        </div>
+    </div>
 
-
+    <script src="data.js"></script>
+    <script>
+        // 보안 설정
+        const LK_KEY = 'fire2026';
+        const LK_PW = 'hs12!';
+        
+        // URL 키 확인
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlKey = urlParams.get('key');
+        
+        if (urlKey !== LK_KEY) {
+            document.getElementById('accessDenied').style.display = 'block';
+        } else {
+            // 세션 확인
+            const isAuthed = sessionStorage.getItem('fire_auth') === 'true';
+            if (isAuthed) {
+                initApp();
+            } else {
+                document.getElementById('passwordOverlay').style.display = 'flex';
+            }
+        }
+        
+        // 비밀번호 확인
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            if (input === LK_PW) {
+                sessionStorage.setItem('fire_auth', 'true');
+                document.getElementById('passwordOverlay').style.display = 'none';
+                initApp();
+            } else {
+                document.getElementById('passwordError').textContent = '비밀번호가 올바르지 않습니다';
+            }
+        }
+        
+        document.getElementById('passwordInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkPassword();
+        });
+        
+        // 전역 변수
+        let DATA = [];
+        let currentFilter = 'all';
+        let currentSearch = '';
+        let RECNO = {};  // 현재 선택된 레코드 인덱스 {cardId: idx}
+        
+        // 앱 초기화
+        function initApp() {
+            document.getElementById('app').style.display = 'block';
+            
+            // 데이터 로드
+            if (typeof FIRE_RAW !== 'undefined') {
+                DATA = FIRE_RAW;
+                
+                // 데이터 기준일 설정
+                const today = new Date();
+                const dateStr = `${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일`;
+                document.getElementById('dataDate').textContent = `데이터 기준: ${dateStr}`;
+                
+                // 통계 업데이트
+                updateStats();
+                
+                // 카드 렌더링
+                renderCards();
+                
+                // 이벤트 리스너
+                setupEventListeners();
+            } else {
+                console.error('FIRE_RAW 데이터가 없습니다');
+            }
+        }
+        
+        // 통계 업데이트
+        function updateStats() {
+            const filtered = getFilteredData();
+            const defectCount = DATA.filter(d => (d.dc || 0) > 0).length;
+            const comprehensiveCount = DATA.filter(d => d.t === '종합').length;
+            
+            document.getElementById('statTotal').textContent = DATA.length;
+            document.getElementById('statFiltered').textContent = filtered.length;
+            document.getElementById('statDefect').textContent = defectCount;
+            document.getElementById('statComprehensive').textContent = comprehensiveCount;
+        }
+        
+        // 필터링된 데이터
+        function getFilteredData() {
+            return DATA.filter(d => {
+                // 필터
+                if (currentFilter !== 'all' && d.t !== currentFilter) return false;
+                
+                // 검색
+                if (currentSearch) {
+                    const search = currentSearch.toLowerCase();
+                    const name = (d.name || '').toLowerCase();
+                    const usage = (d.u || '').toLowerCase();
+                    const address = (d.a || '').toLowerCase();
+                    
+                    if (!name.includes(search) && !usage.includes(search) && !address.includes(search)) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            });
+        }
+        
+        // 카드 렌더링
+        function renderCards() {
+            const filtered = getFilteredData();
+            const listEl = document.getElementById('cardList');
+            const emptyEl = document.getElementById('emptyState');
+            
+            if (filtered.length === 0) {
+                listEl.innerHTML = '';
+                emptyEl.style.display = 'block';
+                return;
+            }
+            
+            emptyEl.style.display = 'none';
+            
+            listEl.innerHTML = filtered.map((d, idx) => {
+                const cardId = `card-${d.n}`;
+                
+                // 이전 연도들
+                const historyYears = (d.hi || []).map(h => h.y).filter((v, i, a) => a.indexOf(v) === i);
+                
+                return `
+                    <div class="card" id="${cardId}">
+                        <div class="card-header" onclick="toggleCard('${cardId}')">
+                            <div class="card-top">
+                                <span class="card-no">${d.n}</span>
+                                <span class="card-name">${d.name || ''}</span>
+                            </div>
+                            <div class="badges">
+                                <span class="badge badge-year">${d.y}</span>
+                                ${d.g ? `<span class="badge badge-grade">${d.g}</span>` : ''}
+                                <span class="badge ${d.t === '종합' ? 'badge-comprehensive' : 'badge-operation'}">${d.t}</span>
+                                ${(d.dc || 0) > 0 ? `<span class="badge badge-defect">불량 ${d.dc}</span>` : '<span class="badge badge-ok">이상없음</span>'}
+                                ${d.ct ? `<span class="badge badge-category">${d.ct}</span>` : ''}
+                                ${historyYears.map(y => `<span class="badge badge-history">+${y}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="card-detail" id="${cardId}-detail"></div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // 카드 토글
+        function toggleCard(cardId) {
+            const detailEl = document.getElementById(`${cardId}-detail`);
+            const isOpen = detailEl.classList.contains('show');
+            
+            if (isOpen) {
+                detailEl.classList.remove('show');
+            } else {
+                // 카드 데이터 찾기
+                const no = parseInt(cardId.split('-')[1]);
+                const data = DATA.find(d => d.n === no);
+                
+                if (!data) return;
+                
+                // 초기화
+                if (!RECNO[cardId]) RECNO[cardId] = 0;
+                
+                // 상세 렌더링
+                renderCardDetail(cardId, data);
+                detailEl.classList.add('show');
+            }
+        }
+        
+        // 카드 상세 렌더링
+        function renderCardDetail(cardId, data) {
+            const detailEl = document.getElementById(`${cardId}-detail`);
+            const currentIdx = RECNO[cardId] || 0;
+            
+            // 현재 레코드 (본인 + 히스토리)
+            const allRecords = [data, ...(data.hi || [])];
+            const current = allRecords[currentIdx];
+            
+            // 연도 선택 바
+            let yearSelectorHTML = '';
+            if (allRecords.length > 1) {
+                yearSelectorHTML = `
+                    <div class="year-selector">
+                        ${allRecords.map((rec, idx) => {
+                            const label = rec.y + (rec.n !== data.n ? ` #${rec.n}` : '');
+                            const star = idx === 0 ? ' ★' : '';
+                            return `<button class="year-btn ${idx === currentIdx ? 'active' : ''}" 
+                                           onclick="switchRecord('${cardId}', ${idx})">${label}${star}</button>`;
+                        }).join('')}
+                    </div>
+                `;
+            }
+            
+            detailEl.innerHTML = `
+                ${yearSelectorHTML}
+                <div class="tabs">
+                    <div class="tab active" data-tab="basic" onclick="switchTab('${cardId}', 'basic')">📋 기본</div>
+                    <div class="tab" data-tab="facility" onclick="switchTab('${cardId}', 'facility')">🧯 소방시설</div>
+                    <div class="tab" data-tab="extinguisher" onclick="switchTab('${cardId}', 'extinguisher')">🪣 소화기구</div>
+                    <div class="tab" data-tab="spec" onclick="switchTab('${cardId}', 'spec')">⚙️ 기기사양</div>
+                    <div class="tab" data-tab="defect" onclick="switchTab('${cardId}', 'defect')">⚠️ 불량사항</div>
+                </div>
+                ${renderBasicTab(current)}
+                ${renderFacilityTab(current)}
+                ${renderExtinguisherTab(current)}
+                ${renderSpecTab(current)}
+                ${renderDefectTab(current)}
+            `;
+        }
+        
+        // 레코드 전환
+        function switchRecord(cardId, idx) {
+            RECNO[cardId] = idx;
+            const no = parseInt(cardId.split('-')[1]);
+            const data = DATA.find(d => d.n === no);
+            renderCardDetail(cardId, data);
+        }
+        
+        // 탭 전환
+        function switchTab(cardId, tabName) {
+            const detailEl = document.getElementById(`${cardId}-detail`);
+            
+            // 탭 활성화
+            detailEl.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            detailEl.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            
+            // 컨텐츠 표시
+            detailEl.querySelectorAll('.tab-content').forEach(c => c.classList.remove('show'));
+            detailEl.querySelector(`#${cardId}-${tabName}`).classList.add('show');
+        }
+        
+        // 기본 탭
+        function renderBasicTab(d) {
+            return `
+                <div class="tab-content show" id="${d.n}-basic">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">점검연도</div>
+                            <div class="info-value">${d.y || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">점검종류</div>
+                            <div class="info-value">${d.t || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">점검월</div>
+                            <div class="info-value">${d.im || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">안전관리등급</div>
+                            <div class="info-value">${d.g || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">구분</div>
+                            <div class="info-value">${d.ct || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">불량 수</div>
+                            <div class="info-value">${d.dc || 0}건</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">종합점검월</div>
+                            <div class="info-value">${d.cm || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">작동점검월</div>
+                            <div class="info-value">${d.om || '-'}</div>
+                        </div>
+                        <div class="info-item full">
+                            <div class="info-label">용도</div>
+                            <div class="info-value">${d.u || '-'}</div>
+                        </div>
+                        <div class="info-item full">
+                            <div class="info-label">주소</div>
+                            <div class="info-value">${d.a || '-'}</div>
+                        </div>
+                        <div class="info-item full">
+                            <div class="info-label">점검기간</div>
+                            <div class="info-value">${d.pd || '-'}</div>
+                        </div>
+                        <div class="info-item full">
+                            <div class="info-label">소방안전관리자</div>
+                            <div class="info-value">${d.mg || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">소방계획서</div>
+                            <div class="info-value">${d.fp || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">화재보험</div>
+                            <div class="info-value">${d.ins || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">연면적</div>
+                            <div class="info-value">${d.fa || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">건축면적</div>
+                            <div class="info-value">${d.ba || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">층수</div>
+                            <div class="info-value">${d.fl || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">높이</div>
+                            <div class="info-value">${d.ht || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">건물동수</div>
+                            <div class="info-value">${d.bd || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">건축구조</div>
+                            <div class="info-value">${d.st || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">직통계단</div>
+                            <div class="info-value">${d.sc || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">승강기</div>
+                            <div class="info-value">${d.el || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">주차장</div>
+                            <div class="info-value">${d.pk || '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">다중이용업소</div>
+                            <div class="info-value">${d.mu || '-'}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 소방시설 탭
+        function renderFacilityTab(d) {
+            const fac = d.fac || {};
+            
+            if (Object.keys(fac).length === 0) {
+                return `<div class="tab-content" id="${d.n}-facility">
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-text">소방시설 정보가 없습니다</div>
+                    </div>
+                </div>`;
+            }
+            
+            let html = `<div class="tab-content" id="${d.n}-facility">`;
+            
+            for (const [cat1, groups] of Object.entries(fac)) {
+                html += `<div class="facility-section">
+                    <div class="facility-title">${cat1}</div>`;
+                
+                for (const [cat2, items] of Object.entries(groups)) {
+                    html += `<div class="facility-group">
+                        <div class="facility-subtitle">${cat2}</div>
+                        <div class="facility-items">`;
+                    
+                    items.forEach(item => {
+                        html += `<span class="facility-item">${item}</span>`;
+                    });
+                    
+                    html += `</div></div>`;
+                }
+                
+                html += `</div>`;
+            }
+            
+            html += `</div>`;
+            return html;
+        }
+        
+        // 소화기구 탭
+        function renderExtinguisherTab(d) {
+            const ext = d.ext || {};
+            
+            if (Object.keys(ext).length === 0) {
+                return `<div class="tab-content" id="${d.n}-extinguisher">
+                    <div class="empty-state">
+                        <div class="empty-icon">🪣</div>
+                        <div class="empty-text">소화기구 정보가 없습니다</div>
+                    </div>
+                </div>`;
+            }
+            
+            let html = `<div class="tab-content" id="${d.n}-extinguisher">
+                <div class="ext-grid">`;
+            
+            for (const [label, value] of Object.entries(ext)) {
+                html += `<div class="ext-card">
+                    <div class="ext-label">${label}</div>
+                    <div class="ext-value">${value}</div>
+                </div>`;
+            }
+            
+            html += `</div></div>`;
+            return html;
+        }
+        
+        // 기기사양 탭
+        function renderSpecTab(d) {
+            const spec = d.sp || {};
+            
+            if (Object.keys(spec).length === 0) {
+                return `<div class="tab-content" id="${d.n}-spec">
+                    <div class="empty-state">
+                        <div class="empty-icon">⚙️</div>
+                        <div class="empty-text">기기사양 정보가 없습니다</div>
+                    </div>
+                </div>`;
+            }
+            
+            let html = `<div class="tab-content" id="${d.n}-spec">`;
+            
+            for (const [cat1, groups] of Object.entries(spec)) {
+                html += `<div class="spec-section">
+                    <div class="spec-title">${cat1}</div>`;
+                
+                for (const [cat2, items] of Object.entries(groups)) {
+                    html += `<div class="spec-group">
+                        <div class="spec-subtitle">${cat2}</div>
+                        <div class="spec-grid">`;
+                    
+                    items.forEach(item => {
+                        const isLong = (item.vl || '').length > 20;
+                        html += `<div class="spec-item ${isLong ? 'full' : ''}">
+                            <div class="spec-label">${item.lb || ''}</div>
+                            <div class="spec-value">${item.vl || ''}</div>
+                        </div>`;
+                    });
+                    
+                    html += `</div></div>`;
+                }
+                
+                html += `</div>`;
+            }
+            
+            html += `</div>`;
+            return html;
+        }
+        
+        // 불량사항 탭
+        function renderDefectTab(d) {
+            const defects = d.def || [];
+            
+            if (defects.length === 0 || (defects.length === 1 && (defects[0].ct === '없음' || defects[0].ct === '해당없음'))) {
+                return `<div class="tab-content" id="${d.n}-defect">
+                    <div class="no-defect">✓ 불량사항 없음</div>
+                </div>`;
+            }
+            
+            let html = `<div class="tab-content" id="${d.n}-defect">
+                <div class="defect-list">`;
+            
+            defects.forEach(def => {
+                if (def.ct && def.ct !== '없음' && def.ct !== '해당없음') {
+                    html += `<div class="defect-card">
+                        <div class="defect-header">
+                            <span class="defect-code">${def.cd || '-'}</span>
+                            <span class="defect-status">${def.ss || '-'}</span>
+                        </div>
+                        ${def.eq ? `<div class="defect-equip">${def.eq}</div>` : ''}
+                        <div class="defect-content">${def.ct || '-'}</div>
+                    </div>`;
+                }
+            });
+            
+            html += `</div></div>`;
+            return html;
+        }
+        
+        // 이벤트 리스너
+        function setupEventListeners() {
+            // 검색
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                currentSearch = e.target.value.trim();
+                renderCards();
+                updateStats();
+            });
+            
+            // 필터
+            document.querySelectorAll('.filter-tab').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentFilter = e.target.dataset.filter;
+                    renderCards();
+                    updateStats();
+                });
+            });
+        }
+    </script>
 </body>
 </html>
