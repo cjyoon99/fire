@@ -46,6 +46,8 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Samsung One'
 .bd{background:#fde8e8;color:#c62828}
 .bok{background:#e6f5e6;color:#2e7d32}
 .bhist{background:#f5f5f5;color:#888;font-size:10px}
+.bdiv-pub{background:#e8f4fd;color:#0277bd;font-size:10px}
+.bdiv-gen{background:#f3f3f3;color:#777;font-size:10px}
 .head-sub{font-size:12px;color:#999;margin-top:5px;line-height:1.6;word-break:keep-all}
 .chevron{font-size:12px;color:#ccc;margin-left:auto;transition:transform 0.2s;flex-shrink:0}
 .card.open .chevron{transform:rotate(180deg)}
@@ -165,7 +167,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Samsung One'
     <div class="top-inner">
       <div class="top-title">🚒 혁신소방 점검대장</div>
       <div class="top-sub" id="top-sub">로딩 중...</div>
-      <div class="top-date">데이터 기준일: 2026년 04월 09일</div>
+      <div class="top-date">데이터 기준일: 2026년 05월 14일</div>
     </div>
   </div>
   <div class="search-area">
@@ -178,6 +180,8 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Samsung One'
     <button class="ft on" onclick="setF('전체')">전체</button>
     <button class="ft" onclick="setF('작동')">작동점검</button>
     <button class="ft" onclick="setF('종합')">종합점검</button>
+    <button class="ft" onclick="setF('공공기관')">공공기관</button>
+    <button class="ft" onclick="setF('일반')">일반</button>
   </div>
   <div class="stat-row">
     <div class="sc"><div class="sc-v" id="s1">0</div><div class="sc-l">전체</div></div>
@@ -186,7 +190,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Samsung One'
     <div class="sc"><div class="sc-v" id="s4">0</div><div class="sc-l">종합점검</div></div>
   </div>
   <div class="list-wrap">
-    <div class="rh"><span id="rh"></span><span class="rh-date">기준: 2026년 04월 09일</span></div>
+    <div class="rh"><span id="rh"></span><span class="rh-date">기준: 2026년 05월 14일</span></div>
     <div id="list"></div>
   </div>
 </div>
@@ -198,9 +202,11 @@ const ALL={};
   function R(d){
     return{
       no:d.n,year:d.y,type:d.t,usage:d.u,address:d.a,period:d.pd,
+      check_month:d.pm,manager:d.mg,
       grade:d.g,approval:d.ap,insurance:d.ins,floor_area:d.fa,build_area:d.ba,
       floors:d.fl,height:d.ht,buildings:d.bd,structure:d.st,staircase:d.sc,
       elevator:d.el,parking:d.pk,multi_use:d.mu,fire_plan:d.fp,
+      comp_month:d.tym,work_month:d.twm,division:d.div,
       facility:d.fac||{},extinguisher:d.ext||{},spec:d.sp||{},
       defects:(d.def||[]).map(x=>({equip:x.eq,code:x.cd,content:x.ct,status:x.ss})),
       defect_count:d.dc,
@@ -234,8 +240,8 @@ const FAC_TREE=[
   {big:'다중이용업소',icon:'🏪',mids:[{mid:'',items:['소화기또는자동확산소화기','간이스프링클러설비','비상경보설비또는자동화재탐지설비','가스누설경보기','피난기구','피난유도선','유도등·유도표지또는비상조명등','휴대용비상조명','방화문','비상구(비상탈출구)','영업장내부피난통로','영상음향차단장치','누전차단기','창문','피난안내도·피난안내영상물','방염물품']}]},
 ];
 function getRec(nm){const b=ALL[nm],no=RECNO[nm];if(!no||no===b.no)return b;return b.history.find(h=>h.no===no)||b;}
-function setF(t){FT=t;document.querySelectorAll('.ft').forEach(b=>{const l=b.textContent.trim();b.classList.toggle('on',t==='전체'?l==='전체':l.startsWith(t));});render();}
-function getF(){const q=(document.getElementById('qi').value||'').trim().toLowerCase();return Object.entries(ALL).filter(([nm,d])=>{if(FT!=='전체'&&d.type!==FT)return false;if(!q)return true;return nm.toLowerCase().includes(q)||(d.usage||'').includes(q)||(d.address||'').includes(q);});}
+function setF(t){FT=t;document.querySelectorAll('.ft').forEach(b=>{const l=b.textContent.trim();b.classList.toggle('on',t==='전체'?l==='전체':l===t||(t==='작동'&&l==='작동점검')||(t==='종합'&&l==='종합점검'));});render();}
+function getF(){const q=(document.getElementById('qi').value||'').trim().toLowerCase();return Object.entries(ALL).filter(([nm,d])=>{if(FT==='작동'&&d.type!=='작동')return false;if(FT==='종합'&&d.type!=='종합')return false;if(FT==='공공기관'&&d.division!=='공공기관')return false;if(FT==='일반'&&d.division!=='일반')return false;if(!q)return true;return nm.toLowerCase().includes(q)||(d.usage||'').includes(q)||(d.address||'').includes(q);});}
 function render(){
   const f=getF();
   document.getElementById('s1').textContent=Object.keys(ALL).length;
@@ -251,9 +257,10 @@ function cHTML(nm,d){
   const tc=rec.type==='종합'?'bt-종합':'bt-작동';
   const db=rec.defect_count>0?`<span class="badge bd">불량 ${rec.defect_count}건</span>`:`<span class="badge bok">이상없음</span>`;
   const hb=d.history&&d.history.length?`<span class="badge bhist">+${d.history.length}년도</span>`:'';
+  const divb=d.division?`<span class="badge ${d.division==='공공기관'?'bdiv-pub':'bdiv-gen'}">${d.division}</span>`:'';
   return`<div class="card${isO?' open':''}" id="c${d.no}">
 <div class="card-head" onclick="tog('${esc(nm)}')">
-  <div class="head-top"><span class="cno">${d.no}</span><span class="cnm">${nm}</span><span class="badge by">${rec.year}${d.history&&d.history.some(h=>h.year===rec.year)?` #${rec.no}`:''}</span><span class="badge bg">${rec.grade||''}</span><span class="badge ${tc}">${rec.type}</span>${db}${hb}<span class="chevron">▼</span></div>
+  <div class="head-top"><span class="cno">${d.no}</span><span class="cnm">${nm}</span><span class="badge by">${rec.year}${d.history&&d.history.some(h=>h.year===rec.year)?` #${rec.no}`:''}</span><span class="badge bg">${rec.grade||''}</span><span class="badge ${tc}">${rec.type}</span>${db}${hb}${divb}<span class="chevron">▼</span></div>
   <div class="head-sub">${[rec.usage,rec.floors,rec.address].filter(Boolean).join(' · ')}</div>
 </div>${isO?dHTML(nm,d):''}</div>`;
 }
@@ -271,7 +278,20 @@ function dHTML(nm,d){
   return`<div class="detail" onclick="event.stopPropagation()">${ybar}<div class="dtabs">${th}</div><div class="tab-body">${body}</div></div>`;
 }
 function tBasic(r){
-  const rows=[['점검연도',r.year,false],['점검종류',r.type,false],['안전관리등급',r.grade,false],['사용승인일',r.approval,true],['연면적',r.floor_area,false],['건축면적',r.build_area,false],['층수',r.floors,false],['높이',r.height,false],['건물동수',r.buildings,false],['건축구조',r.structure,true],['직통계단',r.staircase,false],['승강기',r.elevator,false],['주차장',r.parking,true],['화재보험',r.insurance,true],['점검기간',r.period,true],['소재지',r.address,true],['대상물용도',r.usage,true],['다중이용업소',r.multi_use,false],['소방계획서',r.fire_plan,false]];
+  const rows=[
+    ['점검연도',r.year,false],['점검종류',r.type,false],
+    ['구분',r.division,false],['점검월',r.check_month,false],
+    ['종합점검월',r.comp_month,false],['작동점검월',r.work_month,false],
+    ['안전관리등급',r.grade,false],['소방안전관리자',r.manager,true],
+    ['사용승인일',r.approval,true],['연면적',r.floor_area,false],
+    ['건축면적',r.build_area,false],['층수',r.floors,false],
+    ['높이',r.height,false],['건물동수',r.buildings,false],
+    ['건축구조',r.structure,true],['직통계단',r.staircase,false],
+    ['승강기',r.elevator,false],['주차장',r.parking,true],
+    ['화재보험',r.insurance,true],['점검기간',r.period,true],
+    ['소재지',r.address,true],['대상물용도',r.usage,true],
+    ['다중이용업소',r.multi_use,false],['소방계획서',r.fire_plan,false]
+  ];
   return`<div class="ig">${rows.filter(([,v])=>v).map(([l,v,w])=>`<div class="ir${w?' wide':''}"><div class="il">${l}</div><div class="iv">${v}</div></div>`).join('')}</div>`;
 }
 function tFac(r){
