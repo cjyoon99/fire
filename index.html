@@ -638,31 +638,6 @@
                        placeholder="대상물명, 용도, 주소 검색" 
                        autocapitalize="off">
             </div>
-            
-            <div class="filter-tabs">
-                <button class="filter-tab active" data-filter="all">전체</button>
-                <button class="filter-tab" data-filter="작동">작동점검</button>
-                <button class="filter-tab" data-filter="종합">종합점검</button>
-            </div>
-            
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-label">전체</div>
-                    <div class="stat-value" id="statTotal">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">검색결과</div>
-                    <div class="stat-value" id="statFiltered">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">불량있음</div>
-                    <div class="stat-value" id="statDefect">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">종합점검</div>
-                    <div class="stat-value" id="statComprehensive">0</div>
-                </div>
-            </div>
         </div>
         
         <div class="content">
@@ -714,7 +689,6 @@
         
         // 전역 변수
         let DATA = [];
-        let currentFilter = 'all';
         let currentSearch = '';
         let RECNO = {};  // 현재 선택된 레코드 인덱스 {cardId: idx}
         
@@ -744,25 +718,15 @@
             }
         }
         
-        // 통계 업데이트
+        // 통계 업데이트 (간소화)
         function updateStats() {
-            const filtered = getFilteredData();
-            const defectCount = DATA.filter(d => (d.dc || 0) > 0).length;
-            const comprehensiveCount = DATA.filter(d => d.t === '종합').length;
-            
-            document.getElementById('statTotal').textContent = DATA.length;
-            document.getElementById('statFiltered').textContent = filtered.length;
-            document.getElementById('statDefect').textContent = defectCount;
-            document.getElementById('statComprehensive').textContent = comprehensiveCount;
+            // 필터/통계 UI 제거로 함수 비활성화
         }
         
         // 필터링된 데이터
         function getFilteredData() {
             return DATA.filter(d => {
-                // 필터
-                if (currentFilter !== 'all' && d.t !== currentFilter) return false;
-                
-                // 검색
+                // 검색만 적용
                 if (currentSearch) {
                     const search = currentSearch.toLowerCase();
                     const name = (d.name || '').toLowerCase();
@@ -851,6 +815,7 @@
             // 현재 레코드 (본인 + 히스토리)
             const allRecords = [data, ...(data.hi || [])];
             const current = allRecords[currentIdx];
+            const recordId = `${cardId}-rec${currentIdx}`;  // 고유 ID 생성
             
             // 연도 선택 바
             let yearSelectorHTML = '';
@@ -870,17 +835,17 @@
             detailEl.innerHTML = `
                 ${yearSelectorHTML}
                 <div class="tabs">
-                    <div class="tab active" data-tab="basic" onclick="switchTab('${cardId}', 'basic')">📋 기본</div>
-                    <div class="tab" data-tab="facility" onclick="switchTab('${cardId}', 'facility')">🧯 소방시설</div>
-                    <div class="tab" data-tab="extinguisher" onclick="switchTab('${cardId}', 'extinguisher')">🪣 소화기구</div>
-                    <div class="tab" data-tab="spec" onclick="switchTab('${cardId}', 'spec')">⚙️ 기기사양</div>
-                    <div class="tab" data-tab="defect" onclick="switchTab('${cardId}', 'defect')">⚠️ 불량사항</div>
+                    <div class="tab active" data-tab="basic" onclick="switchTab('${recordId}', 'basic')">📋 기본</div>
+                    <div class="tab" data-tab="facility" onclick="switchTab('${recordId}', 'facility')">🧯 소방시설</div>
+                    <div class="tab" data-tab="extinguisher" onclick="switchTab('${recordId}', 'extinguisher')">🪣 소화기구</div>
+                    <div class="tab" data-tab="spec" onclick="switchTab('${recordId}', 'spec')">⚙️ 기기사양</div>
+                    <div class="tab" data-tab="defect" onclick="switchTab('${recordId}', 'defect')">⚠️ 불량사항</div>
                 </div>
-                ${renderBasicTab(current)}
-                ${renderFacilityTab(current)}
-                ${renderExtinguisherTab(current)}
-                ${renderSpecTab(current)}
-                ${renderDefectTab(current)}
+                ${renderBasicTab(current, recordId)}
+                ${renderFacilityTab(current, recordId)}
+                ${renderExtinguisherTab(current, recordId)}
+                ${renderSpecTab(current, recordId)}
+                ${renderDefectTab(current, recordId)}
             `;
         }
         
@@ -893,22 +858,27 @@
         }
         
         // 탭 전환
-        function switchTab(cardId, tabName) {
-            const detailEl = document.getElementById(`${cardId}-detail`);
+        function switchTab(recordId, tabName) {
+            // recordId로 부모 요소 찾기
+            const tabsContainer = document.querySelector(`[onclick*="${recordId}"]`)?.closest('.card-detail');
+            if (!tabsContainer) return;
             
             // 탭 활성화
-            detailEl.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            detailEl.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            tabsContainer.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tabsContainer.querySelector(`[data-tab="${tabName}"]`)?.classList.add('active');
             
             // 컨텐츠 표시
-            detailEl.querySelectorAll('.tab-content').forEach(c => c.classList.remove('show'));
-            detailEl.querySelector(`#${cardId}-${tabName}`).classList.add('show');
+            tabsContainer.querySelectorAll('.tab-content').forEach(c => c.classList.remove('show'));
+            const targetContent = tabsContainer.querySelector(`#${recordId}-${tabName}`);
+            if (targetContent) {
+                targetContent.classList.add('show');
+            }
         }
         
         // 기본 탭
-        function renderBasicTab(d) {
+        function renderBasicTab(d, recordId) {
             return `
-                <div class="tab-content show" id="${d.n}-basic">
+                <div class="tab-content show" id="${recordId}-basic">
                     <div class="info-grid">
                         <div class="info-item">
                             <div class="info-label">점검연도</div>
@@ -1008,11 +978,11 @@
         }
         
         // 소방시설 탭
-        function renderFacilityTab(d) {
+        function renderFacilityTab(d, recordId) {
             const fac = d.fac || {};
             
             if (Object.keys(fac).length === 0) {
-                return `<div class="tab-content" id="${d.n}-facility">
+                return `<div class="tab-content" id="${recordId}-facility">
                     <div class="empty-state">
                         <div class="empty-icon">📋</div>
                         <div class="empty-text">소방시설 정보가 없습니다</div>
@@ -1020,7 +990,7 @@
                 </div>`;
             }
             
-            let html = `<div class="tab-content" id="${d.n}-facility">`;
+            let html = `<div class="tab-content" id="${recordId}-facility">`;
             
             for (const [cat1, groups] of Object.entries(fac)) {
                 html += `<div class="facility-section">
@@ -1046,11 +1016,11 @@
         }
         
         // 소화기구 탭
-        function renderExtinguisherTab(d) {
+        function renderExtinguisherTab(d, recordId) {
             const ext = d.ext || {};
             
             if (Object.keys(ext).length === 0) {
-                return `<div class="tab-content" id="${d.n}-extinguisher">
+                return `<div class="tab-content" id="${recordId}-extinguisher">
                     <div class="empty-state">
                         <div class="empty-icon">🪣</div>
                         <div class="empty-text">소화기구 정보가 없습니다</div>
@@ -1058,7 +1028,7 @@
                 </div>`;
             }
             
-            let html = `<div class="tab-content" id="${d.n}-extinguisher">
+            let html = `<div class="tab-content" id="${recordId}-extinguisher">
                 <div class="ext-grid">`;
             
             for (const [label, value] of Object.entries(ext)) {
@@ -1073,11 +1043,11 @@
         }
         
         // 기기사양 탭
-        function renderSpecTab(d) {
+        function renderSpecTab(d, recordId) {
             const spec = d.sp || {};
             
             if (Object.keys(spec).length === 0) {
-                return `<div class="tab-content" id="${d.n}-spec">
+                return `<div class="tab-content" id="${recordId}-spec">
                     <div class="empty-state">
                         <div class="empty-icon">⚙️</div>
                         <div class="empty-text">기기사양 정보가 없습니다</div>
@@ -1085,7 +1055,7 @@
                 </div>`;
             }
             
-            let html = `<div class="tab-content" id="${d.n}-spec">`;
+            let html = `<div class="tab-content" id="${recordId}-spec">`;
             
             for (const [cat1, groups] of Object.entries(spec)) {
                 html += `<div class="spec-section">
@@ -1115,16 +1085,16 @@
         }
         
         // 불량사항 탭
-        function renderDefectTab(d) {
+        function renderDefectTab(d, recordId) {
             const defects = d.def || [];
             
             if (defects.length === 0 || (defects.length === 1 && (defects[0].ct === '없음' || defects[0].ct === '해당없음'))) {
-                return `<div class="tab-content" id="${d.n}-defect">
+                return `<div class="tab-content" id="${recordId}-defect">
                     <div class="no-defect">✓ 불량사항 없음</div>
                 </div>`;
             }
             
-            let html = `<div class="tab-content" id="${d.n}-defect">
+            let html = `<div class="tab-content" id="${recordId}-defect">
                 <div class="defect-list">`;
             
             defects.forEach(def => {
@@ -1151,18 +1121,6 @@
             searchInput.addEventListener('input', (e) => {
                 currentSearch = e.target.value.trim();
                 renderCards();
-                updateStats();
-            });
-            
-            // 필터
-            document.querySelectorAll('.filter-tab').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
-                    e.target.classList.add('active');
-                    currentFilter = e.target.dataset.filter;
-                    renderCards();
-                    updateStats();
-                });
             });
         }
     </script>
