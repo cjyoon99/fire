@@ -21,10 +21,11 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Samsung One'
 .search-box{display:flex;align-items:center;background:rgba(255,255,255,0.15);border-radius:12px;padding:0 12px;gap:8px;height:44px}
 .search-box input{flex:1;background:none;border:none;color:#fff;font-size:15px;outline:none;font-family:inherit;-webkit-appearance:none}
 .search-box input::placeholder{color:rgba(255,255,255,0.55)}
-.filter-bar{background:#fff;border-bottom:1px solid #e8e8ec;display:flex;flex-shrink:0}
-.ft{flex:1;height:44px;border:none;background:none;font-size:14px;color:#888;font-family:inherit;cursor:pointer;position:relative;-webkit-appearance:none}
+.filter-bar{background:#fff;border-bottom:1px solid #e8e8ec;display:flex;flex-shrink:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.filter-bar::-webkit-scrollbar{display:none}
+.ft{flex-shrink:0;height:44px;padding:0 14px;border:none;background:none;font-size:14px;color:#888;font-family:inherit;cursor:pointer;position:relative;white-space:nowrap;-webkit-appearance:none}
 .ft.on{color:#1c3d6e;font-weight:700}
-.ft.on::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:2.5px;background:#1c3d6e;border-radius:2px}
+.ft.on::after{content:'';position:absolute;bottom:0;left:15%;right:15%;height:2.5px;background:#1c3d6e;border-radius:2px}
 .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#e8e8ec;border-bottom:1px solid #e0e0e6;flex-shrink:0}
 .sc{background:#fff;padding:9px 4px;text-align:center}
 .sc-v{font-size:18px;font-weight:700;color:#1c3d6e}
@@ -46,8 +47,8 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Samsung One'
 .bd{background:#fde8e8;color:#c62828}
 .bok{background:#e6f5e6;color:#2e7d32}
 .bhist{background:#f5f5f5;color:#888;font-size:10px}
-.bdiv-pub{background:#e8f4fd;color:#0277bd;font-size:10px}
-.bdiv-gen{background:#f3f3f3;color:#777;font-size:10px}
+.bdiv-pub{background:#e3f0ff;color:#1565c0;font-size:10px}
+.bdiv-gen{background:#f5f5f5;color:#777;font-size:10px}
 .head-sub{font-size:12px;color:#999;margin-top:5px;line-height:1.6;word-break:keep-all}
 .chevron{font-size:12px;color:#ccc;margin-left:auto;transition:transform 0.2s;flex-shrink:0}
 .card.open .chevron{transform:rotate(180deg)}
@@ -109,54 +110,48 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Samsung One'
 .fab{position:fixed;bottom:calc(max(env(safe-area-inset-bottom),16px) + 12px);right:20px;width:50px;height:50px;border-radius:25px;background:#1c3d6e;color:#fff;font-size:22px;border:none;box-shadow:0 4px 14px rgba(28,61,110,0.4);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:100;-webkit-appearance:none}
 .fab:active{transform:scale(0.93)}
 
-
-
-
-
 #lockWrap{position:fixed;inset:0;background:#1c3d6e;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
 #lockWrap.hidden{display:none}
 .lkFire{margin-bottom:12px;display:flex;align-items:center;justify-content:center}
 .lkTitle{font-size:21px;font-weight:700;color:#fff;margin-bottom:6px}
-.lkDesc{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:32px}
+.lkDesc{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:28px}
 .lkCard{background:rgba(255,255,255,0.1);border-radius:18px;padding:28px 24px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px}
 .lkLbl{font-size:12px;font-weight:600;color:rgba(255,255,255,0.7)}
 .lkPw{height:52px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#fff;font-size:17px;padding:0 16px;font-family:inherit;outline:none;-webkit-appearance:none;letter-spacing:2px}
 .lkPw::placeholder{letter-spacing:0;color:rgba(255,255,255,0.4)}
 .lkPw:focus{border-color:rgba(255,255,255,0.6)}
+.lkRow{display:flex;align-items:center;gap:10px}
+.lkChk{width:18px;height:18px;accent-color:#fff;cursor:pointer;flex-shrink:0}
+.lkChkLbl{font-size:13px;color:rgba(255,255,255,0.7);cursor:pointer}
 .lkOk{height:52px;border-radius:12px;border:none;background:#fff;color:#1c3d6e;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer}
 .lkOk:active{opacity:0.85}
 .lkErr{font-size:13px;text-align:center;color:#ff8080;min-height:18px;font-weight:500}
-
 </style>
 </head>
 <body>
 <div id="lockWrap">
   <div class="lkFire"><svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- 소화전 몸체 -->
   <rect x="22" y="28" width="28" height="32" rx="6" fill="#ffffff" opacity="0.95"/>
-  <!-- 소화전 상단 캡 -->
   <rect x="18" y="22" width="36" height="10" rx="5" fill="#ffffff" opacity="0.95"/>
-  <!-- 소화전 상단 볼트 -->
   <circle cx="36" cy="17" r="6" fill="#ffffff" opacity="0.95"/>
   <circle cx="36" cy="17" r="3" fill="#1c3d6e" opacity="0.6"/>
-  <!-- 소화전 좌측 호스 연결구 -->
   <rect x="10" y="34" width="12" height="8" rx="4" fill="#ffffff" opacity="0.9"/>
-  <!-- 소화전 우측 호스 연결구 -->
   <rect x="50" y="34" width="12" height="8" rx="4" fill="#ffffff" opacity="0.9"/>
-  <!-- 소화전 하단 베이스 -->
   <rect x="18" y="56" width="36" height="8" rx="4" fill="#ffffff" opacity="0.95"/>
-  <!-- 소화전 중앙 패널 -->
   <rect x="28" y="34" width="16" height="16" rx="3" fill="#1c3d6e" opacity="0.25"/>
-  <!-- 소화전 볼트들 -->
   <circle cx="26" cy="32" r="2" fill="#1c3d6e" opacity="0.3"/>
   <circle cx="46" cy="32" r="2" fill="#1c3d6e" opacity="0.3"/>
-</svg></div>
+  </svg></div>
   <div class="lkTitle">혁신소방 점검대장</div>
   <div class="lkDesc">접근 권한이 필요합니다</div>
   <div class="lkCard">
     <div class="lkLbl">비밀번호</div>
     <input class="lkPw" id="lkPw" type="password" placeholder="비밀번호를 입력하세요"
       autocomplete="off" onkeydown="if(event.key==='Enter')lkOk()">
+    <div class="lkRow">
+      <input class="lkChk" type="checkbox" id="lkAuto">
+      <label class="lkChkLbl" for="lkAuto">30일 자동 로그인</label>
+    </div>
     <button class="lkOk" onclick="lkOk()">확인</button>
     <div class="lkErr" id="lkErr"></div>
   </div>
@@ -167,7 +162,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Samsung One'
     <div class="top-inner">
       <div class="top-title">🚒 혁신소방 점검대장</div>
       <div class="top-sub" id="top-sub">로딩 중...</div>
-      <div class="top-date">데이터 기준일: 2026년 05월 14일</div>
+      <div class="top-date" id="top-date">데이터 기준일: 로딩 중...</div>
     </div>
   </div>
   <div class="search-area">
@@ -190,7 +185,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Samsung One'
     <div class="sc"><div class="sc-v" id="s4">0</div><div class="sc-l">종합점검</div></div>
   </div>
   <div class="list-wrap">
-    <div class="rh"><span id="rh"></span><span class="rh-date">기준: 2026년 05월 14일</span></div>
+    <div class="rh"><span id="rh"></span><span class="rh-date" id="rh-date">기준일 로딩중...</span></div>
     <div id="list"></div>
   </div>
 </div>
@@ -201,19 +196,25 @@ const ALL={};
 (function(){
   function R(d){
     return{
-      no:d.n,year:d.y,type:d.t,usage:d.u,address:d.a,period:d.pd,
-      check_month:d.pm,manager:d.mg,
-      grade:d.g,approval:d.ap,insurance:d.ins,floor_area:d.fa,build_area:d.ba,
-      floors:d.fl,height:d.ht,buildings:d.bd,structure:d.st,staircase:d.sc,
-      elevator:d.el,parking:d.pk,multi_use:d.mu,fire_plan:d.fp,
-      comp_month:d.tym,work_month:d.twm,division:d.div,
-      facility:d.fac||{},extinguisher:d.ext||{},spec:d.sp||{},
+      no:d.n, year:d.y, type:d.t, usage:d.u, address:d.a, period:d.pd,
+      pm:d.pm, grade:d.g, insurance:d.ins, floor_area:d.fa, build_area:d.ba,
+      floors:d.fl, height:d.ht, buildings:d.bd, structure:d.st, staircase:d.sc,
+      elevator:d.el, parking:d.pk, multi_use:d.mu, fire_plan:d.fp,
+      tym:d.tym, twm:d.twm, div:d.div,
+      facility:d.fac||{}, extinguisher:d.ext||{}, spec:d.sp||{},
       defects:(d.def||[]).map(x=>({equip:x.eq,code:x.cd,content:x.ct,status:x.ss})),
       defect_count:d.dc,
       history:(d.hi||[]).map(R)
     };
   }
-  for(const [nm,d] of Object.entries(FIRE_RAW)) ALL[nm]=R(d);
+  const list = FIRE_RAW.data || [];
+  for(const d of list){ ALL[d.nm] = R(d); ALL[d.nm]._no = d.n; }
+  // 기준일
+  const ref = FIRE_RAW.ref || '';
+  const topDate = document.getElementById('top-date');
+  const rhDate  = document.getElementById('rh-date');
+  if(topDate) topDate.textContent = '데이터 기준일: ' + ref;
+  if(rhDate)  rhDate.textContent  = '기준: ' + ref;
 })();
 
 let EXP=null,TAB={},RECNO={},FT='전체';
@@ -240,8 +241,30 @@ const FAC_TREE=[
   {big:'다중이용업소',icon:'🏪',mids:[{mid:'',items:['소화기또는자동확산소화기','간이스프링클러설비','비상경보설비또는자동화재탐지설비','가스누설경보기','피난기구','피난유도선','유도등·유도표지또는비상조명등','휴대용비상조명','방화문','비상구(비상탈출구)','영업장내부피난통로','영상음향차단장치','누전차단기','창문','피난안내도·피난안내영상물','방염물품']}]},
 ];
 function getRec(nm){const b=ALL[nm],no=RECNO[nm];if(!no||no===b.no)return b;return b.history.find(h=>h.no===no)||b;}
-function setF(t){FT=t;document.querySelectorAll('.ft').forEach(b=>{const l=b.textContent.trim();b.classList.toggle('on',t==='전체'?l==='전체':l===t||(t==='작동'&&l==='작동점검')||(t==='종합'&&l==='종합점검'));});render();}
-function getF(){const q=(document.getElementById('qi').value||'').trim().toLowerCase();return Object.entries(ALL).filter(([nm,d])=>{if(FT==='작동'&&d.type!=='작동')return false;if(FT==='종합'&&d.type!=='종합')return false;if(FT==='공공기관'&&d.division!=='공공기관')return false;if(FT==='일반'&&d.division!=='일반')return false;if(!q)return true;return nm.toLowerCase().includes(q)||(d.usage||'').includes(q)||(d.address||'').includes(q);});}
+function setF(t){
+  FT=t;
+  document.querySelectorAll('.ft').forEach(b=>{
+    const l=b.textContent.trim();
+    let on=false;
+    if(t==='전체') on=(l==='전체');
+    else if(t==='작동') on=l.startsWith('작동');
+    else if(t==='종합') on=l.startsWith('종합');
+    else on=(l===t);
+    b.classList.toggle('on',on);
+  });
+  render();
+}
+function getF(){
+  const q=(document.getElementById('qi').value||'').trim().toLowerCase();
+  return Object.entries(ALL).filter(([nm,d])=>{
+    if(FT==='작동'&&d.type!=='작동') return false;
+    if(FT==='종합'&&d.type!=='종합') return false;
+    if(FT==='공공기관'&&d.div!=='공공기관') return false;
+    if(FT==='일반'&&d.div!=='일반') return false;
+    if(!q) return true;
+    return nm.toLowerCase().includes(q)||(d.usage||'').includes(q)||(d.address||'').includes(q);
+  });
+}
 function render(){
   const f=getF();
   document.getElementById('s1').textContent=Object.keys(ALL).length;
@@ -257,19 +280,19 @@ function cHTML(nm,d){
   const tc=rec.type==='종합'?'bt-종합':'bt-작동';
   const db=rec.defect_count>0?`<span class="badge bd">불량 ${rec.defect_count}건</span>`:`<span class="badge bok">이상없음</span>`;
   const hb=d.history&&d.history.length?`<span class="badge bhist">+${d.history.length}년도</span>`:'';
-  const divb=d.division?`<span class="badge ${d.division==='공공기관'?'bdiv-pub':'bdiv-gen'}">${d.division}</span>`:'';
-  return`<div class="card${isO?' open':''}" id="c${d.no}">
+  const divb=d.div==='공공기관'?`<span class="badge bdiv-pub">공공</span>`:(d.div==='일반'?`<span class="badge bdiv-gen">일반</span>`:'');
+  return`<div class="card${isO?' open':''}" id="c${d._no}">
 <div class="card-head" onclick="tog('${esc(nm)}')">
-  <div class="head-top"><span class="cno">${d.no}</span><span class="cnm">${nm}</span><span class="badge by">${rec.year}${d.history&&d.history.some(h=>h.year===rec.year)?` #${rec.no}`:''}</span><span class="badge bg">${rec.grade||''}</span><span class="badge ${tc}">${rec.type}</span>${db}${hb}${divb}<span class="chevron">▼</span></div>
+  <div class="head-top"><span class="cno">${d._no}</span><span class="cnm">${nm}</span><span class="badge by">${rec.year}${d.history&&d.history.some(h=>h.year===rec.year)?` #${rec.no}`:''}</span><span class="badge bg">${rec.grade||''}</span><span class="badge ${tc}">${rec.type}</span>${db}${hb}${divb}<span class="chevron">▼</span></div>
   <div class="head-sub">${[rec.usage,rec.floors,rec.address].filter(Boolean).join(' · ')}</div>
 </div>${isO?dHTML(nm,d):''}</div>`;
 }
 function dHTML(nm,d){
-  const rec=getRec(nm),selNo=RECNO[nm]||d.no,all=[d,...(d.history||[])];
+  const rec=getRec(nm),selNo=RECNO[nm]||d._no,all=[d,...(d.history||[])];
   const ybar=all.length>1?`<div class="year-bar">${all.map((r,i)=>{
     const isOn=r.no===selNo;
     const lbl=r.year+(all.filter(x=>x.year===r.year).length>1?` #${r.no}`:'')+(i===0?' ★':'');
-    return`<button class="ybtn${isOn?' on':''}" onclick="setRec('${esc(nm)}',${r.no});event.stopPropagation()">${lbl}</button>`;
+    return`<button class="ybtn${isOn?' on':''}" onclick="setRec('${esc(nm)}',${JSON.stringify(r.no)});event.stopPropagation()">${lbl}</button>`;
   }).join('')}</div>`:'';
   const t=TAB[nm]||'기본';
   const tabs=[['기본','📋'],['소방시설','🧯'],['소화기구','🪣'],['기기사양','⚙️'],['불량사항','⚠️']];
@@ -279,18 +302,17 @@ function dHTML(nm,d){
 }
 function tBasic(r){
   const rows=[
-    ['점검연도',r.year,false],['점검종류',r.type,false],
-    ['구분',r.division,false],['점검월',r.check_month,false],
-    ['종합점검월',r.comp_month,false],['작동점검월',r.work_month,false],
-    ['안전관리등급',r.grade,false],['소방안전관리자',r.manager,true],
-    ['사용승인일',r.approval,true],['연면적',r.floor_area,false],
-    ['건축면적',r.build_area,false],['층수',r.floors,false],
-    ['높이',r.height,false],['건물동수',r.buildings,false],
-    ['건축구조',r.structure,true],['직통계단',r.staircase,false],
-    ['승강기',r.elevator,false],['주차장',r.parking,true],
-    ['화재보험',r.insurance,true],['점검기간',r.period,true],
-    ['소재지',r.address,true],['대상물용도',r.usage,true],
-    ['다중이용업소',r.multi_use,false],['소방계획서',r.fire_plan,false]
+    ['점검연도',r.year,false],['점검종류',r.type,false],['구분',r.div,false],
+    ['안전관리등급',r.grade,false],['점검월',r.pm,false],
+    ['종합점검월',r.tym,false],['작동점검월',r.twm,false],
+    ['연면적',r.floor_area,false],['건축면적',r.build_area,false],
+    ['층수',r.floors,false],['높이',r.height,false],
+    ['건물동수',r.buildings,false],['건축구조',r.structure,true],
+    ['직통계단',r.staircase,false],['승강기',r.elevator,false],
+    ['주차장',r.parking,true],['화재보험',r.insurance,true],
+    ['점검기간',r.period,true],['소재지',r.address,true],
+    ['대상물용도',r.usage,true],['다중이용업소',r.multi_use,false],
+    ['소방계획서',r.fire_plan,false]
   ];
   return`<div class="ig">${rows.filter(([,v])=>v).map(([l,v,w])=>`<div class="ir${w?' wide':''}"><div class="il">${l}</div><div class="iv">${v}</div></div>`).join('')}</div>`;
 }
@@ -311,9 +333,14 @@ function tFac(r){
   }
   return html||'<p class="empty">소방시설 정보 없음</p>';
 }
-function tExt(r){const e=r.extinguisher||{},ks=Object.keys(e);if(!ks.length)return'<p class="empty">소화기구 정보 없음</p>';return`<div class="eg">${ks.map(k=>`<div class="ei"><div class="en">${e[k]}</div><div class="el">${k}</div></div>`).join('')}</div>`;}
+function tExt(r){
+  const e=r.extinguisher||{},ks=Object.keys(e);
+  if(!ks.length)return'<p class="empty">소화기구 정보 없음</p>';
+  return`<div class="eg">${ks.map(k=>`<div class="ei"><div class="en">${e[k]}</div><div class="el">${k}</div></div>`).join('')}</div>`;
+}
 function tSpec(r){
-  const spec=r.spec;if(!spec||!Object.keys(spec).length)return'<p class="empty">기기사양 정보 없음</p>';
+  const spec=r.spec;
+  if(!spec||!Object.keys(spec).length)return'<p class="empty">기기사양 정보 없음</p>';
   let html='';
   for(const [big,mids] of Object.entries(spec)){
     const entries=Object.entries(mids);if(!entries.length)continue;
@@ -321,41 +348,58 @@ function tSpec(r){
     for(const [mid,items] of entries){
       if(!items||!items.length)continue;
       html+=`<div class="spec-mid-block">`;
-      if(mid&&mid!=='_')html+=`<div class="spec-mid-hd">${mid}</div>`;
-      html+=`<div class="spec-items">${items.map(it=>`<div class="si${it.vl.length>14?' wide':''}"><div class="si-l">${it.lb}</div><div class="si-v">${it.vl}</div></div>`).join('')}</div></div>`;
+      if(mid&&mid!=='_'&&mid!=='기타')html+=`<div class="spec-mid-hd">${mid}</div>`;
+      html+=`<div class="spec-items">${items.map(it=>`<div class="si${(it.vl||'').length>14?' wide':''}"><div class="si-l">${it.lb||''}</div><div class="si-v">${it.vl||''}</div></div>`).join('')}</div></div>`;
     }
     html+=`</div></div>`;
   }
   return html||'<p class="empty">기기사양 정보 없음</p>';
 }
-function tDef(r){if(!r.defects||!r.defects.length)return'<p class="empty">✅ 불량사항 없음</p>';return r.defects.map(df=>`<div class="di"><div class="di-top"><span class="dc2">${df.code}</span><span class="de2">${df.equip}</span><span class="ds s${df.status}">${df.status}</span></div><div class="dct">${df.content}</div></div>`).join('');}
-function tog(nm){EXP=(EXP===nm)?null:nm;if(!RECNO[nm])RECNO[nm]=ALL[nm].no;render();if(EXP){const el=document.getElementById('c'+ALL[nm].no);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),60);}}
+function tDef(r){
+  if(!r.defects||!r.defects.length)return'<p class="empty">✅ 불량사항 없음</p>';
+  return r.defects.map(df=>`<div class="di"><div class="di-top"><span class="dc2">${df.code||''}</span><span class="de2">${df.equip||''}</span><span class="ds s${df.status||''}">${df.status||''}</span></div><div class="dct">${df.content||''}</div></div>`).join('');
+}
+function tog(nm){
+  EXP=(EXP===nm)?null:nm;
+  if(!RECNO[nm])RECNO[nm]=ALL[nm]._no;
+  render();
+  if(EXP){const el=document.getElementById('c'+ALL[nm]._no);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),60);}
+}
 function setTab(nm,t){TAB[nm]=t;render();}
 function setRec(nm,no){RECNO[nm]=no;render();}
 function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
 render();
 </script>
 <script>
-var LK_KEY='fire2026',LK_PW='hs12!',LK_SS='hsFire';
+var LK_KEY='fire2026',LK_PW='hs12!',LK_SS='hsFire',LK_LS='hsFireAuto';
 (function(){
   var k=new URLSearchParams(location.search).get('key')||'';
   if(k!==LK_KEY){
     document.getElementById('lockWrap').innerHTML='<p style="color:rgba(255,255,255,0.4);font-size:14px;text-align:center;padding:40px">접근이 제한된 페이지입니다</p>';
     return;
   }
+  // 자동 로그인 확인 (localStorage 만료일)
+  try{
+    var exp=localStorage.getItem(LK_LS);
+    if(exp&&Date.now()<parseInt(exp,10)){
+      document.getElementById('lockWrap').classList.add('hidden');
+      render();return;
+    }
+  }catch(e){}
+  // sessionStorage 확인
   if(sessionStorage.getItem(LK_SS)==='y'){
     document.getElementById('lockWrap').classList.add('hidden');
-    render();
-    return;
+    render();return;
   }
-  setTimeout(function(){
-    var el=document.getElementById('lkPw');
-    if(el) el.focus();
-  },150);
+  setTimeout(function(){var el=document.getElementById('lkPw');if(el)el.focus();},150);
 })();
 function lkOk(){
   var v=document.getElementById('lkPw').value;
   if(v===LK_PW){
+    var auto=document.getElementById('lkAuto').checked;
+    if(auto){
+      try{localStorage.setItem(LK_LS,String(Date.now()+30*24*60*60*1000));}catch(e){}
+    }
     sessionStorage.setItem(LK_SS,'y');
     document.getElementById('lockWrap').classList.add('hidden');
     render();
@@ -368,7 +412,5 @@ function lkOk(){
   }
 }
 </script>
-
-
 </body>
 </html>
