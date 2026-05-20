@@ -292,7 +292,7 @@ function dHTML(nm,d){
   const ybar=all.length>1?`<div class="year-bar">${all.map((r,i)=>{
     const isOn=r.no===selNo;
     const lbl=r.year+(all.filter(x=>x.year===r.year).length>1?` #${r.no}`:'')+(i===0?' ★':'');
-    return`<button class="ybtn${isOn?' on':''}" onclick="setRec('${esc(nm)}',${JSON.stringify(r.no)});event.stopPropagation()">${lbl}</button>`;
+    return`<button class="ybtn${isOn?' on':''}" onclick="setRec('${esc(nm)}','${r.no}');event.stopPropagation()">${lbl}</button>`;
   }).join('')}</div>`:'';
   const t=TAB[nm]||'기본';
   const tabs=[['기본','📋'],['소방시설','🧯'],['소화기구','🪣'],['기기사양','⚙️'],['불량사항','⚠️']];
@@ -367,21 +367,15 @@ function tog(nm){
 }
 function setTab(nm,t){
   TAB[nm]=t;
-  _updateDetail(nm);
+  const d=ALL[nm],el=document.getElementById('c'+d._no);
+  if(el){const det=el.querySelector('.detail');if(det){det.outerHTML=dHTML(nm,d);return;}}
+  render();
 }
 function setRec(nm,no){
   RECNO[nm]=no;
-  _updateDetail(nm);
-}
-function _updateDetail(nm){
-  const d=ALL[nm];
-  const el=document.getElementById('c'+d._no);
-  if(!el) return render();
-  const det=el.querySelector('.detail');
-  if(!det) return render();
-  const tmp=document.createElement('div');
-  tmp.innerHTML=dHTML(nm,d);
-  det.replaceWith(tmp.firstChild);
+  const d=ALL[nm],el=document.getElementById('c'+d._no);
+  if(el){const det=el.querySelector('.detail');if(det){det.outerHTML=dHTML(nm,d);return;}}
+  render();
 }
 function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
 render();
