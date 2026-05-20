@@ -367,15 +367,22 @@ function tog(nm){
 }
 function setTab(nm,t){
   TAB[nm]=t;
-  const d=ALL[nm],el=document.getElementById('c'+d._no);
-  if(el){const det=el.querySelector('.detail');if(det){det.outerHTML=dHTML(nm,d);return;}}
-  render();
+  _redrawDetail(nm);
 }
 function setRec(nm,no){
   RECNO[nm]=no;
-  const d=ALL[nm],el=document.getElementById('c'+d._no);
-  if(el){const det=el.querySelector('.detail');if(det){det.outerHTML=dHTML(nm,d);return;}}
-  render();
+  _redrawDetail(nm);
+}
+function _redrawDetail(nm){
+  var d=ALL[nm];
+  var card=document.getElementById('c'+d._no);
+  if(!card){render();return;}
+  var det=card.querySelector('.detail');
+  if(!det){render();return;}
+  var wrap=document.createElement('div');
+  wrap.innerHTML=dHTML(nm,d);
+  var newDet=wrap.firstChild;
+  card.replaceChild(newDet,det);
 }
 function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
 render();
