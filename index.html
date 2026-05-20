@@ -303,7 +303,7 @@ function dHTML(nm,d){
 function tBasic(r){
   const rows=[
     ['점검연도',r.year,false],['점검종류',r.type,false],['구분',r.div,false],
-    ['안전관리등급',r.grade,false],['점검월',r.pm,false],
+    ['점검월',r.pm,false],
     ['종합점검월',r.tym,false],['작동점검월',r.twm,false],
     ['연면적',r.floor_area,false],['건축면적',r.build_area,false],
     ['층수',r.floors,false],['높이',r.height,false],
@@ -365,8 +365,28 @@ function tog(nm){
   render();
   if(EXP){const el=document.getElementById('c'+ALL[nm]._no);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),60);}
 }
-function setTab(nm,t){TAB[nm]=t;render();}
-function setRec(nm,no){RECNO[nm]=no;render();}
+function setTab(nm,t){
+  TAB[nm]=t;
+  // 해당 카드만 detail 부분 업데이트 (스크롤 위치 유지)
+  const d=ALL[nm];
+  const el=document.getElementById('c'+d._no);
+  if(el){
+    const det=el.querySelector('.detail');
+    if(det){det.outerHTML=dHTML(nm,d);return;}
+  }
+  render();
+}
+function setRec(nm,no){
+  RECNO[nm]=no;
+  // 해당 카드만 detail 부분 업데이트 (스크롤 위치 유지, 모바일 tap 오작동 방지)
+  const d=ALL[nm];
+  const el=document.getElementById('c'+d._no);
+  if(el){
+    const det=el.querySelector('.detail');
+    if(det){det.outerHTML=dHTML(nm,d);return;}
+  }
+  render();
+}
 function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
 render();
 </script>
