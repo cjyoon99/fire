@@ -367,24 +367,14 @@ function tog(nm){
 }
 function setTab(nm,t){
   TAB[nm]=t;
-  // 해당 카드만 detail 부분 업데이트 (스크롤 위치 유지)
-  const d=ALL[nm];
-  const el=document.getElementById('c'+d._no);
-  if(el){
-    const det=el.querySelector('.detail');
-    if(det){det.outerHTML=dHTML(nm,d);return;}
-  }
+  const d=ALL[nm],el=document.getElementById('c'+d._no);
+  if(el){const det=el.querySelector('.detail');if(det){det.outerHTML=dHTML(nm,d);return;}}
   render();
 }
 function setRec(nm,no){
   RECNO[nm]=no;
-  // 해당 카드만 detail 부분 업데이트 (스크롤 위치 유지, 모바일 tap 오작동 방지)
-  const d=ALL[nm];
-  const el=document.getElementById('c'+d._no);
-  if(el){
-    const det=el.querySelector('.detail');
-    if(det){det.outerHTML=dHTML(nm,d);return;}
-  }
+  const d=ALL[nm],el=document.getElementById('c'+d._no);
+  if(el){const det=el.querySelector('.detail');if(det){det.outerHTML=dHTML(nm,d);return;}}
   render();
 }
 function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
