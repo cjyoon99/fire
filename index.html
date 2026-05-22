@@ -201,6 +201,7 @@ const ALL={};
       floors:d.fl, height:d.ht, buildings:d.bd, structure:d.st, staircase:d.sc,
       elevator:d.el, parking:d.pk, multi_use:d.mu, fire_plan:d.fp,
       tym:d.tym, twm:d.twm, div:d.div,
+      bld_dt:d.bld_dt, use_dt:d.use_dt,
       facility:d.fac||{}, extinguisher:d.ext||{}, spec:d.sp||{},
       defects:(d.def||[]).map(x=>({equip:x.eq,code:x.cd,content:x.ct,status:x.ss})),
       defect_count:d.dc,
@@ -303,13 +304,14 @@ function dHTML(nm,d){
 function tBasic(r){
   const rows=[
     ['점검연도',r.year,false],['점검종류',r.type,false],['구분',r.div,false],
-    ['점검월',r.pm,false],
+    ['점검월',r.pm,false],['안전관리등급',r.grade,false],
     ['종합점검월',r.tym,false],['작동점검월',r.twm,false],
     ['연면적',r.floor_area,false],['건축면적',r.build_area,false],
     ['층수',r.floors,false],['높이',r.height,false],
     ['건물동수',r.buildings,false],['건축구조',r.structure,true],
     ['직통계단',r.staircase,false],['승강기',r.elevator,false],
     ['주차장',r.parking,true],['화재보험',r.insurance,true],
+    ['건축허가일',r.bld_dt,true],['사용승인일',r.use_dt,true],
     ['점검기간',r.period,true],['소재지',r.address,true],
     ['대상물용도',r.usage,true],['다중이용업소',r.multi_use,false],
     ['소방계획서',r.fire_plan,false]
@@ -321,6 +323,7 @@ function tFac(r){
   if(!Object.keys(fac).length)return'<p class="empty">소방시설 정보 없음</p>';
   let html='';
   for(const {big,icon,mids} of FAC_TREE){
+    if(big==='다중이용업소'&&(!r.multi_use||r.multi_use==='해당없음'))continue;
     if(!mids.some(({items})=>items.some(k=>fac[k])))continue;
     html+=`<div class="fac-big"><div class="fac-big-hd"><span class="fac-big-icon">${icon}</span><span class="fac-big-name">${big}</span></div><div class="fac-big-body">`;
     for(const {mid,items} of mids){
